@@ -1,0 +1,13 @@
+.room-scheduler-container {
+    height: 600px;
+    width: 100%;
+  }
+  
+  .e-schedule .e-timeline-view .e-content-wrap table td:first-child {
+    display: none;
+  }
+  
+  .e-schedule .e-timeline-view .e-work-cells.e-date-header-wrap table td:first-child {
+    display: none;
+  }
+  
