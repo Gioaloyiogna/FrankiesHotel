@@ -1,12 +1,12 @@
-import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
+import {Button, Form, Input, InputNumber, Modal, Space, Table, message} from 'antd'
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../_metronic/helpers'
-import { BASE_URL } from '../../urls'
-import { Link } from 'react-router-dom'
+import {BASE_URL} from '../../urls'
+import {Link} from 'react-router-dom'
 // import { employeedata } from '../../../../../data/DummyData'
-import { useQuery } from 'react-query'
-import { Api_Endpoint,fetchGuests, fetchNotes } from '../../../../services/ApiCalls'
+import {useMutation, useQuery, useQueryClient} from 'react-query'
+import {Api_Endpoint, deleteNotesApi, fetchGuests, fetchNotes} from '../../../../services/ApiCalls'
 import Checkbox from 'antd/es/checkbox/Checkbox'
 
 const Notes = () => {
@@ -16,15 +16,15 @@ const Notes = () => {
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const [form] = Form.useForm()
-  const [img, setImg] = useState();
+  const [img, setImg] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {data: getNotes, isLoading: NotesLoad} = useQuery('Notes', fetchNotes)
   const {data: getGuests, isLoading: GetGuestsLoad} = useQuery('Guests', fetchGuests)
-  
-
+  const {mutate: deleteNoteData} = useMutation((value: any) => deleteNotesApi(value))
+  const queryClient = useQueryClient()
   // roomsTypedata?.data.find(roomTypedata => {
   //   if(roomTypedata.id==roo)
-  //   return 
+  //   return
   // })
   // const roomTypeData = roomsTypedata?.data;
   // // console.log('room', roomTypeData)
@@ -47,31 +47,30 @@ const Notes = () => {
   //   lastname: dat?.name,
   //   Email:dat?.Email
   //   }
-    
+
   // });
-  const guestsData = getGuests?.data;
+  const guestsData = getGuests?.data
   // console.log('room', roomTypeData)
-  const testData = getNotes?.data.map((e:any)=>{
+  const testData = getNotes?.data.map((e: any) => {
     // console.log('e', e)
 
-   const dat = guestsData?.find((x:any)=>{
+    const dat = guestsData?.find((x: any) => {
       // console.log("x", x)
 
-      if(x.id===e.guestId){
-        return x;
+      if (x.id === e.guestId) {
+        return x
       }
     })
 
     // console.log('dat',dat)
     return {
-    id: e?.id,
-    guest: dat?.firstname+" "+dat?.lastname,
-    notes:e?.notes,
-    timestamp: e?.timestamp,
+      id: e?.id,
+      guest: dat?.firstname + ' ' + dat?.lastname,
+      notes: e?.notes,
+      timestamp: e?.timestamp,
     }
-    
-  });
-  console.log("testData", testData);
+  })
+  console.log('testData', testData)
   const showModal = () => {
     setIsModalOpen(true)
   }
@@ -96,7 +95,6 @@ const Notes = () => {
       return e
     }
   }
-  
 
   function handleDelete(element: any) {
     deleteData(element)
@@ -141,8 +139,6 @@ const Notes = () => {
         return 0
       },
     },
-   
-    
 
     {
       title: 'Action',
@@ -153,17 +149,33 @@ const Notes = () => {
           {/* <Link to={`/notes-form/${record.id}`}>
           <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'blue', color: 'white' }}>Note</span>
           </Link> */}
-           <Link to={`/employee-edit-form/${record.id}`}>
-          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'red', color: 'white' }}>Delete</span>
-          </Link>
+          <a href='#' className='btn btn-light-danger btn-sm' onClick={() => deleteNotes(record)}>
+            Delete
+          </a>
+          {/* <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'red', color: 'white' }} >Delete</span> */}
         </Space>
       ),
-      
     },
   ]
-  const {data:allNotes} = useQuery('Notes', fetchNotes, {cacheTime:5000})
- 
+  const {data: allNotes} = useQuery('Notes', fetchNotes, {cacheTime: 5000})
 
+  const deleteNotes = (record: any) => {
+    Modal.confirm({
+      okText: 'Delete',
+      okType: 'primary',
+      title: 'Are you sure, you want to delete this note?',
+      onOk: () => {
+        deleteNoteData(record.id, {
+          onSuccess: () => {
+            message.success('Note deleted successfully!')
+            queryClient.invalidateQueries('Notes')
+             queryClient.invalidateQueries('Guests')
+            // queryClient.invalidateQueries('rooms')
+          },
+        })
+      },
+    })
+  }
   const loadData = async () => {
     setLoading(true)
     try {
@@ -180,23 +192,20 @@ const Notes = () => {
     // fetchImage()
   }, [])
 
-
-
   // const sortedEmployees = gridData.sort((a:any, b:any) => a?.departmentId.localeCompare(b?.departmentId));
   // const females = sortedEmployees.filter((employee:any) => employee.gender === 'female');
-  
-  
-  var out_data:any = {};
-  
-  gridData.forEach(function(row:any) {
+
+  var out_data: any = {}
+
+  gridData.forEach(function (row: any) {
     if (out_data[row.departmentId]) {
-      out_data[row.departmentId].push(row);
+      out_data[row.departmentId].push(row)
     } else {
-      out_data[row.departmentId] = [row];
+      out_data[row.departmentId] = [row]
     }
-  });
-  
-  const dataWithIndex = gridData.map((item: any, index:any) => ({
+  })
+
+  const dataWithIndex = gridData.map((item: any, index: any) => ({
     ...item,
     key: index,
   }))
@@ -230,15 +239,14 @@ const Notes = () => {
     //   }}
     // >
     <div
-  style={{
-    // width:'50%',
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '5px',
-    boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-  }}
->
-
+      style={{
+        // width:'50%',
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '5px',
+        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+      }}
+    >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
           <div className='d-flex justify-content-between'>
@@ -265,11 +273,10 @@ const Notes = () => {
               <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-            </button>
+              </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={testData}  loading={NotesLoad}/>
-          
+          <Table columns={columns} dataSource={testData} loading={NotesLoad} />
         </div>
       </KTCardBody>
     </div>

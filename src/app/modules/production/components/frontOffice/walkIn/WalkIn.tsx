@@ -2,11 +2,11 @@ import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../../_metronic/helpers'
-import { BASE_URL } from '../../../urls'
-import { Link } from 'react-router-dom'
-import { employeedata } from '../../../../../data/DummyData'
-import { useQuery } from 'react-query'
-import { Api_Endpoint} from '../../../../../services/ApiCalls'
+import {BASE_URL} from '../../../urls'
+import {Link} from 'react-router-dom'
+import {employeedata} from '../../../../../data/DummyData'
+import {useQuery} from 'react-query'
+import {Api_Endpoint} from '../../../../../services/ApiCalls'
 // import { Api_Endpoint, fetchDepartments, fetchEmployees, fetchGrades, fetchNotches, fetchPaygroups } from '../../../../../services/ApiCalls'
 
 const WalkIn = () => {
@@ -16,9 +16,8 @@ const WalkIn = () => {
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const [form] = Form.useForm()
-  const [img, setImg] = useState();
+  const [img, setImg] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -51,19 +50,18 @@ const WalkIn = () => {
   //   const imageObjectURL:any  = URL.createObjectURL(imageBlob);
   //   setImg(imageObjectURL);
   // };
-  
 
   function handleDelete(element: any) {
     deleteData(element)
   }
   const columns: any = [
-  //  {
-  //     title: 'Profile',
-  //     dataIndex: 'name',
-  //     render: (a: any, b: any) => {
-  //       return  <img style={{borderRadius:"10px"}} src={img} width={50} height={50}></img>
-  //     }
-  //   },
+    //  {
+    //     title: 'Profile',
+    //     dataIndex: 'name',
+    //     render: (a: any, b: any) => {
+    //       return  <img style={{borderRadius:"10px"}} src={img} width={50} height={50}></img>
+    //     }
+    //   },
     {
       title: 'Room',
       dataIndex: 'employeeId',
@@ -90,7 +88,7 @@ const WalkIn = () => {
         return 0
       },
     },
-   
+
     {
       title: 'Guest Name',
       dataIndex: 'surname',
@@ -172,7 +170,7 @@ const WalkIn = () => {
     //   render: (row: any) => {
     //     return getDepartmentName(row.departmentId)
     //   },
-      
+
     //   sorter: (a: any, b: any) => {
     //     if (a.departmentId > b.departmentId) {
     //       return 1
@@ -276,7 +274,6 @@ const WalkIn = () => {
           </Link>
         </Space>
       ),
-      
     },
   ]
 
@@ -285,7 +282,7 @@ const WalkIn = () => {
   // const {data:allPaygroups} = useQuery('paygroup', fetchPaygroups, {cacheTime:5000})
   // const {data:allNotches} = useQuery('notches', fetchNotches, {cacheTime:5000})
   // const {data:allGrades} = useQuery('grades', fetchGrades, {cacheTime:5000})
- 
+
   // const getDepartmentName = (departmentId: any) => {
   //   let departmentName = null
   //   allDepartments?.data.map((item: any) => {
@@ -294,7 +291,7 @@ const WalkIn = () => {
   //     }
   //   })
   //   return departmentName
-  // } 
+  // }
   // const getGradeName = (gradeId: any) => {
   //   let gradeName = null
   //   allGrades?.data.map((item: any) => {
@@ -303,7 +300,7 @@ const WalkIn = () => {
   //     }
   //   })
   //   return gradeName
-  // } 
+  // }
   // const getPaygroupName = (paygroupId: any) => {
   //   let paygroupName = null
   //   allPaygroups?.data.map((item: any) => {
@@ -312,7 +309,7 @@ const WalkIn = () => {
   //     }
   //   })
   //   return paygroupName
-  // } 
+  // }
   // const getNotchName = (notchId: any) => {
   //   let notchName = null
   //   allNotches?.data.map((item: any) => {
@@ -321,7 +318,7 @@ const WalkIn = () => {
   //     }
   //   })
   //   return notchName
-  // } 
+  // }
 
   const loadData = async () => {
     setLoading(true)
@@ -339,23 +336,20 @@ const WalkIn = () => {
     // fetchImage()
   }, [])
 
-
-
   // const sortedEmployees = gridData.sort((a:any, b:any) => a?.departmentId.localeCompare(b?.departmentId));
   // const females = sortedEmployees.filter((employee:any) => employee.gender === 'female');
-  
-  
-  var out_data:any = {};
-  
-  gridData.forEach(function(row:any) {
+
+  var out_data: any = {}
+
+  gridData.forEach(function (row: any) {
     if (out_data[row.departmentId]) {
-      out_data[row.departmentId].push(row);
+      out_data[row.departmentId].push(row)
     } else {
-      out_data[row.departmentId] = [row];
+      out_data[row.departmentId] = [row]
     }
-  });
-  
-  const dataWithIndex = gridData.map((item: any, index:any) => ({
+  })
+
+  const dataWithIndex = gridData.map((item: any, index: any) => ({
     ...item,
     key: index,
   }))
@@ -406,20 +400,19 @@ const WalkIn = () => {
             </Space>
             <Space style={{marginBottom: 16}}>
               <Link to='/employee-form'>
-              <button type='button' className='btn btn-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
+                <button type='button' className='btn btn-primary me-3'>
+                  <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                  Add
+                </button>
               </Link>
 
               <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-            </button>
+              </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={dataWithIndex}  loading={loading}/>
-          
+          <Table columns={columns} dataSource={dataWithIndex} loading={loading} />
         </div>
       </KTCardBody>
     </div>

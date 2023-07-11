@@ -2,11 +2,11 @@ import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../../_metronic/helpers'
-import { BASE_URL } from '../../../urls'
-import { Link } from 'react-router-dom'
+import {BASE_URL} from '../../../urls'
+import {Link} from 'react-router-dom'
 // import { employeedata } from '../../../../../data/DummyData'
-import { useQuery } from 'react-query'
-import { Api_Endpoint, fetchRoomsTypes } from '../../../../../services/ApiCalls'
+import {useQuery} from 'react-query'
+import {Api_Endpoint, fetchRoomsTypes} from '../../../../../services/ApiCalls'
 
 const RoomType = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -15,11 +15,9 @@ const RoomType = () => {
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const [form] = Form.useForm()
-  const [img, setImg] = useState();
+  const [img, setImg] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {data: roomsdata, isLoading: roomsLoad} = useQuery('rooms', fetchRoomsTypes)
-  
-
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -37,7 +35,7 @@ const RoomType = () => {
   const deleteData = async (element: any) => {
     try {
       const response = await axios.delete(`${BASE_URL}/RoomsType`)
-    //   const response = await axios.delete(`${BASE_URL}/RoomsType/${element.id}`)
+      //   const response = await axios.delete(`${BASE_URL}/RoomsType/${element.id}`)
       // update the local state so that react can refecth and re-render the table with the new data
       const newData = gridData.filter((item: any) => item.id !== element.id)
       setGridData(newData)
@@ -47,25 +45,24 @@ const RoomType = () => {
     }
   }
 
-//   const fetchImage = async () => {
-//     const res = await fetch("https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80");
-//     const imageBlob = await res.blob();
-//     const imageObjectURL:any  = URL.createObjectURL(imageBlob);
-//     setImg(imageObjectURL);
-//   };
-  
+  //   const fetchImage = async () => {
+  //     const res = await fetch("https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80");
+  //     const imageBlob = await res.blob();
+  //     const imageObjectURL:any  = URL.createObjectURL(imageBlob);
+  //     setImg(imageObjectURL);
+  //   };
 
   function handleDelete(element: any) {
     deleteData(element)
   }
   const columns: any = [
-//    {
-//       title: 'Profile',
-//       dataIndex: 'name',
-//       render: (a: any, b: any) => {
-//         return  <img style={{borderRadius:"10px"}} src={img} width={50} height={50}></img>
-//       }
-//     },
+    //    {
+    //       title: 'Profile',
+    //       dataIndex: 'name',
+    //       render: (a: any, b: any) => {
+    //         return  <img style={{borderRadius:"10px"}} src={img} width={50} height={50}></img>
+    //       }
+    //     },
     // {
     //   title: 'EmployeeID',
     //   dataIndex: 'employeeId',
@@ -92,7 +89,7 @@ const RoomType = () => {
         return 0
       },
     },
-   
+
     {
       title: 'Description',
       dataIndex: 'description',
@@ -174,7 +171,7 @@ const RoomType = () => {
     //   render: (row: any) => {
     //     return getDepartmentName(row.departmentId)
     //   },
-      
+
     //   sorter: (a: any, b: any) => {
     //     if (a.departmentId > b.departmentId) {
     //       return 1
@@ -206,16 +203,18 @@ const RoomType = () => {
       render: (_: any, record: any) => (
         <Space size='middle'>
           <Link to={`/rooms/${record.id}`} state={record.id}>
-          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'blue', color: 'white' }}>Rooms</span>
+            <a href='#' className='btn btn-light-primary btn-sm'>
+              Rooms
+            </a>
           </Link>
           {/* <Link to={`/employee-edit-form/${record.id}`}>
           <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'blue', color: 'white' }}>Rooms</span>
           </Link> */}
           <Link to={`/employee-edit-form/${record.id}`}>
-          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'red', color: 'white' }}>Delete</span>
+            <a href='#' className='btn btn-light-danger btn-sm'>
+              Delete
+            </a>
           </Link>
-
-
 
           {/* <Link to={`/employee-edit-form/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Update</span>
@@ -225,7 +224,6 @@ const RoomType = () => {
           </Link> */}
         </Space>
       ),
-      
     },
   ]
 
@@ -234,44 +232,44 @@ const RoomType = () => {
   // const {data:allPaygroups} = useQuery('paygroup', fetchPaygroups, {cacheTime:5000})
   // const {data:allNotches} = useQuery('notches', fetchNotches, {cacheTime:5000})
   // const {data:allGrades} = useQuery('grades', fetchGrades, {cacheTime:5000})
-  const {data:allRoomTypes} = useQuery('roomsTypes', fetchRoomsTypes, {cacheTime:5000})
- 
-//   const getDepartmentName = (departmentId: any) => {
-//     let departmentName = null
-//     allDepartments?.data.map((item: any) => {
-//       if (item.id === departmentId) {
-//         departmentName=item.name
-//       }
-//     })
-//     return departmentName
-//   } 
-//   const getGradeName = (gradeId: any) => {
-//     let gradeName = null
-//     allGrades?.data.map((item: any) => {
-//       if (item.id === gradeId) {
-//         gradeName=item.name
-//       }
-//     })
-//     return gradeName
-//   } 
-//   const getPaygroupName = (paygroupId: any) => {
-//     let paygroupName = null
-//     allPaygroups?.data.map((item: any) => {
-//       if (item.id === paygroupId) {
-//         paygroupName=item.name
-//       }
-//     })
-//     return paygroupName
-//   } 
-//   const getNotchName = (notchId: any) => {
-//     let notchName = null
-//     allNotches?.data.map((item: any) => {
-//       if (item.id === notchId) {
-//         notchName=item.name
-//       }
-//     })
-//     return notchName
-//   } 
+  const {data: allRoomTypes} = useQuery('roomsTypes', fetchRoomsTypes, {cacheTime: 5000})
+
+  //   const getDepartmentName = (departmentId: any) => {
+  //     let departmentName = null
+  //     allDepartments?.data.map((item: any) => {
+  //       if (item.id === departmentId) {
+  //         departmentName=item.name
+  //       }
+  //     })
+  //     return departmentName
+  //   }
+  //   const getGradeName = (gradeId: any) => {
+  //     let gradeName = null
+  //     allGrades?.data.map((item: any) => {
+  //       if (item.id === gradeId) {
+  //         gradeName=item.name
+  //       }
+  //     })
+  //     return gradeName
+  //   }
+  //   const getPaygroupName = (paygroupId: any) => {
+  //     let paygroupName = null
+  //     allPaygroups?.data.map((item: any) => {
+  //       if (item.id === paygroupId) {
+  //         paygroupName=item.name
+  //       }
+  //     })
+  //     return paygroupName
+  //   }
+  //   const getNotchName = (notchId: any) => {
+  //     let notchName = null
+  //     allNotches?.data.map((item: any) => {
+  //       if (item.id === notchId) {
+  //         notchName=item.name
+  //       }
+  //     })
+  //     return notchName
+  //   }
 
   const loadData = async () => {
     setLoading(true)
@@ -289,23 +287,20 @@ const RoomType = () => {
     // fetchImage()
   }, [])
 
-
-
   // const sortedEmployees = gridData.sort((a:any, b:any) => a?.departmentId.localeCompare(b?.departmentId));
   // const females = sortedEmployees.filter((employee:any) => employee.gender === 'female');
-  
-  
-  var out_data:any = {};
-  
-  gridData.forEach(function(row:any) {
+
+  var out_data: any = {}
+
+  gridData.forEach(function (row: any) {
     if (out_data[row.departmentId]) {
-      out_data[row.departmentId].push(row);
+      out_data[row.departmentId].push(row)
     } else {
-      out_data[row.departmentId] = [row];
+      out_data[row.departmentId] = [row]
     }
-  });
-  
-  const dataWithIndex = gridData.map((item: any, index:any) => ({
+  })
+
+  const dataWithIndex = gridData.map((item: any, index: any) => ({
     ...item,
     key: index,
   }))
@@ -356,20 +351,19 @@ const RoomType = () => {
             </Space>
             <Space style={{marginBottom: 16}}>
               <Link to='/roomTypeForm'>
-              <button type='button' className='btn btn-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
+                <button type='button' className='btn btn-primary me-3'>
+                  <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                  Add
+                </button>
               </Link>
 
               <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-            </button>
+              </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={roomsdata?.data}  loading={roomsLoad}/>
-          
+          <Table columns={columns} dataSource={roomsdata?.data} loading={roomsLoad} />
         </div>
       </KTCardBody>
     </div>

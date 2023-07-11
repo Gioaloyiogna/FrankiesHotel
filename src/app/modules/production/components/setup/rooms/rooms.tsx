@@ -2,11 +2,11 @@ import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../../_metronic/helpers'
-import { BASE_URL } from '../../../urls'
-import { Link, useParams } from 'react-router-dom'
+import {BASE_URL} from '../../../urls'
+import {Link, useParams} from 'react-router-dom'
 // import { employeedata } from '../../../../../data/DummyData'
-import { useQuery } from 'react-query'
-import { Api_Endpoint, fetchRooms } from '../../../../../services/ApiCalls'
+import {useQuery} from 'react-query'
+import {Api_Endpoint, fetchRooms} from '../../../../../services/ApiCalls'
 import Checkbox from 'antd/es/checkbox/Checkbox'
 
 const Rooms = () => {
@@ -16,15 +16,14 @@ const Rooms = () => {
   let [filteredData] = useState([])
   const [submitLoading, setSubmitLoading] = useState(false)
   const [form] = Form.useForm()
-  const [img, setImg] = useState();
+  const [img, setImg] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {data: roomsdata, isLoading: roomsLoad} = useQuery('rooms', fetchRooms)
-  
 
-  const parms: any = useParams();
-//   console.log(parms)
-//   console.log(roomsdata?.data?.filter((rooms: any)=>rooms.typeId===parms.id))
-//   console.log(roomsdata?.data?.filter((rooms: any)=>rooms?.typeId===1))
+  const parms: any = useParams()
+  //   console.log(parms)
+  //   console.log(roomsdata?.data?.filter((rooms: any)=>rooms.typeId===parms.id))
+  //   console.log(roomsdata?.data?.filter((rooms: any)=>rooms?.typeId===1))
   const showModal = () => {
     setIsModalOpen(true)
   }
@@ -49,7 +48,6 @@ const Rooms = () => {
       return e
     }
   }
-  
 
   function handleDelete(element: any) {
     deleteData(element)
@@ -68,23 +66,21 @@ const Rooms = () => {
         return 0
       },
     },
-   
+
     {
-        title: 'IsActive',
-        dataIndex: 'isActive',
-        render: (isActive: boolean) => (
-          <Checkbox checked={isActive} />
-        ),
-        sorter: (a: any, b: any) => {
-          if (a.isActive > b.isActive) {
-            return 1;
-          }
-          if (b.isActive > a.isActive) {
-            return -1;
-          }
-          return 0;
-        },
+      title: 'IsActive',
+      dataIndex: 'isActive',
+      render: (isActive: boolean) => <Checkbox checked={isActive} />,
+      sorter: (a: any, b: any) => {
+        if (a.isActive > b.isActive) {
+          return 1
+        }
+        if (b.isActive > a.isActive) {
+          return -1
+        }
+        return 0
       },
+    },
 
     {
       title: 'Action',
@@ -96,15 +92,18 @@ const Rooms = () => {
           <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'blue', color: 'white' }}>Rooms</span>
           </Link> */}
           <Link to={`/employee-edit-form/${record.id}`}>
-          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'red', color: 'white' }}>Delete</span>
+            <span
+              className='btn btn-light-info btn-sm delete-button'
+              style={{backgroundColor: 'red', color: 'white'}}
+            >
+              Delete
+            </span>
           </Link>
         </Space>
       ),
-      
     },
   ]
-  const {data:allRoomss} = useQuery('roomsTypes', fetchRooms, {cacheTime:5000})
- 
+  const {data: allRoomss} = useQuery('roomsTypes', fetchRooms, {cacheTime: 5000})
 
   const loadData = async () => {
     setLoading(true)
@@ -122,23 +121,20 @@ const Rooms = () => {
     // fetchImage()
   }, [])
 
-
-
   // const sortedEmployees = gridData.sort((a:any, b:any) => a?.departmentId.localeCompare(b?.departmentId));
   // const females = sortedEmployees.filter((employee:any) => employee.gender === 'female');
-  
-  
-  var out_data:any = {};
-  
-  gridData.forEach(function(row:any) {
+
+  var out_data: any = {}
+
+  gridData.forEach(function (row: any) {
     if (out_data[row.departmentId]) {
-      out_data[row.departmentId].push(row);
+      out_data[row.departmentId].push(row)
     } else {
-      out_data[row.departmentId] = [row];
+      out_data[row.departmentId] = [row]
     }
-  });
-  
-  const dataWithIndex = gridData.map((item: any, index:any) => ({
+  })
+
+  const dataWithIndex = gridData.map((item: any, index: any) => ({
     ...item,
     key: index,
   }))
@@ -172,19 +168,28 @@ const Rooms = () => {
     //   }}
     // >
     <div
-  style={{
-    width:'50%',
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '5px',
-    boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
-  }}
->
-
+      style={{
+        width: '100%',
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '5px',
+        boxShadow: '2px 2px 15px rgba(0,0,0,0.08)',
+      }}
+    >
       <KTCardBody className='py-4 '>
         <div className='table-responsive'>
+        <Link to='/roomType'>
+                <a
+                  style={{fontSize: '16px', fontWeight: '500'}}
+                  className='mb-7 btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary'
+                >
+                  Back to room type
+                </a>
+              </Link>
           <div className='d-flex justify-content-between'>
+            
             <Space style={{marginBottom: 16}}>
+              
               <Input
                 placeholder='Enter Search Text'
                 onChange={handleInputChange}
@@ -197,21 +202,28 @@ const Rooms = () => {
               </Button>
             </Space>
             <Space style={{marginBottom: 16}}>
+             
               <Link to={`/roomsForm/${parms.id}`}>
-              <button type='button' className='btn btn-primary me-3'>
-                <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
-                Add
-              </button>
+                <button type='button' className='btn btn-primary me-3'>
+                  <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
+                  Add
+                </button>
               </Link>
 
               <button type='button' className='btn btn-light-primary me-3'>
                 <KTSVG path='/media/icons/duotune/arrows/arr078.svg' className='svg-icon-2' />
                 Export
-            </button>
+              </button>
             </Space>
           </div>
-          <Table columns={columns} dataSource={roomsdata?.data?.filter((rooms: any)=>rooms.typeId===parseInt(parms.id))}  loading={roomsLoad}/>
-          
+          <Table
+            columns={columns}
+            dataSource={roomsdata?.data?.filter(
+              (rooms: any) => rooms.typeId === parseInt(parms.id)
+            )}
+            loading={roomsLoad}
+            className='table-responsive'
+          />
         </div>
       </KTCardBody>
     </div>

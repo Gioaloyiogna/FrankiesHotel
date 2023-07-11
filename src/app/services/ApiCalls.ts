@@ -2,7 +2,7 @@ import axios from 'axios';
 
 
 
-// export  const Api_Endpoint ="https://app.sipconsult.net/frankiesHotelAPI/api";
+//export  const Api_Endpoint ="https://app.sipconsult.net/frankiesHotelAPI/api";
 export  const Api_Endpoint ="https://localhost:5001/api";
 
 export const fetchRoomsTypes= ()=>{
@@ -19,6 +19,25 @@ export const fetchNotes= ()=>{
 }
 export const fetchBookings= ()=>{
     return axios.get(`${Api_Endpoint}/Booking`)
+}
+
+export const GuestCheckinApi=(values:any)=>{
+    return axios.put(`${Api_Endpoint}/Booking/CheckIn`, values);
+}
+export const GuestCheckoutApi=(values:any)=>{
+    return axios.put(`${Api_Endpoint}/Booking/CheckOut`, values);
+}
+export const addNoteApi=(values:any)=>{
+    return axios.post(`${Api_Endpoint}/Notes`, values)
+}
+export const deleteGuestApi=(id:any)=>{
+    return axios.delete(`${Api_Endpoint}/Guests/${id}`, id)
+}
+export const addBookingApi=(values:any)=>{
+    return axios.post(`${Api_Endpoint}/Booking`, values)
+}
+export const deleteNotesApi=(id:any)=>{
+    return axios.delete(`${Api_Endpoint}/Notes/${id}`, id)
 }
 
 // export const fetchDivisions= ()=>{
