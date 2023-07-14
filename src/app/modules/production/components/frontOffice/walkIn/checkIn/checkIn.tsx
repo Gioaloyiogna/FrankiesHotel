@@ -246,19 +246,19 @@ const CheckIn = () => {
         return 0
       },
     },
-    {
-      title: 'Check In Time',
-      dataIndex: 'checkInTime',
-      sorter: (a: any, b: any) => {
-        if (a.checkInTime > b.checkInTime) {
-          return 1
-        }
-        if (b.checkInTime > a.checkInTime) {
-          return -1
-        }
-        return 0
-      },
-    },
+    // {
+    //   title: 'Check In Time',
+    //   dataIndex: 'checkInTime',
+    //   sorter: (a: any, b: any) => {
+    //     if (a.checkInTime > b.checkInTime) {
+    //       return 1
+    //     }
+    //     if (b.checkInTime > a.checkInTime) {
+    //       return -1
+    //     }
+    //     return 0
+    //   },
+    // },
 
     {
       title: 'Action',
@@ -266,13 +266,13 @@ const CheckIn = () => {
       // width: 20,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          <a
+          {/* <a
             href='#'
             className='btn btn-light-warning btn-sm'
             onClick={() => checkGuestIn({id: record.id, checkInOutTime: new Date()})}
           >
             Ckeck In
-          </a>
+          </a> */}
           <a
             href='#'
             className='btn btn-light-primary btn-sm'

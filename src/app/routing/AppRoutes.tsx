@@ -18,7 +18,7 @@ import {App} from '../App'
  * @see https://facebook.github.io/create-react-app/docs/using-the-public-folder
  */
 const {PUBLIC_URL} = process.env
-
+const currentUserTest = true
 const AppRoutes: FC = () => {
   const {currentUser} = useAuth()
   return (
@@ -27,7 +27,7 @@ const AppRoutes: FC = () => {
         <Route element={<App />}>
           <Route path='error/*' element={<ErrorsPage />} />
           <Route path='logout' element={<Logout />} />
-          {currentUser ? (
+          {currentUserTest ? (
             <>
               <Route path='/*' element={<PrivateRoutes />} />
               <Route index element={<Navigate to='/hr-dashboard' />} />

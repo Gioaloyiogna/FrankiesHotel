@@ -29,7 +29,7 @@ import {
   Resize,
   DragAndDrop,
 } from '@syncfusion/ej2-react-schedule'
-// import {Input, message} from 'antd'
+import {Input, Modal} from 'antd'
 import {
   Api_Endpoint,
   fetchRooms,
@@ -38,6 +38,9 @@ import {
 } from '../../../../../../services/ApiCalls'
 import {BASE_URL} from '../../../../urls'
 import './index.css'
+import {useState} from 'react'
+import moment from 'moment'
+import {CalendarOutlined, UserAddOutlined, LayoutOutlined} from '@ant-design/icons'
 //Editing editor buttons
 L10n.load({
   'en-US': {
@@ -57,6 +60,8 @@ const Calendar = () => {
   const {data: guestsdata} = useQuery('guests', fetchGuests)
   const {data: bookingsdata} = useQuery('bookings', fetchBookings)
   const {mutate: addNewBooking} = useMutation((values) => axios.post(`${BASE_URL}/Booking`, values))
+  const [isOpen, setIsOpen] = useState(false)
+  const [bookingsDetails, setbookingsDetails] = useState([])
 
   // console.log('Guests ',guestsdata)
   // console.log('Guests ',guestsdata?.data[0])
@@ -260,8 +265,8 @@ const Calendar = () => {
       message.error('Please select an event')
     )
   }
-  function quickInfoTemplatesHeader(props){
-     console.log('props',props);
+  function quickInfoTemplatesHeader(props) {
+    console.log('props', props)
   }
 
   // let onCellClick = (args) => {
@@ -281,17 +286,72 @@ const Calendar = () => {
 
   //   // }
   // }
+  let cancelModal = () => {
+    setIsOpen(false)
+  }
   let onCellClick = (args) => {
-    if (args.element.style.backgroundColor == 'rgb(159, 158, 163)') {
-      args.cancel = false
+    if (args.element.style.backgroundColor == 'rgb(242, 238, 237)') {
+      setbookingsDetails({})
+      args.cancel = true
+      const roomIndex = parseInt(args.element.getAttribute('data-group-index')) + 1
+      const startDate = moment(args.startTime, 'dddd, MMMM D, YYYY [at] HH:mm')
+        .toISOString()
+        .split('T')[0]
+      const endDate = moment(args.endTime, 'dddd, MMMM D, YYYY [at] HH:mm')
+        .toISOString()
+        .split('T')[0]
+      const clientData = bookingsdata?.data.filter((item) => {
+        const bookstart = new Date(item.bookStart).toISOString().split('T')[0]
+        const bookend = new Date(item.bookEnd).toISOString().split('T')[0]
+        console.log('start', bookstart)
+        console.log('end', bookend)
+        console.log('room', item.roomId, roomIndex)
+        return startDate >= bookstart && parseInt(item.roomId) == roomIndex && endDate <= bookend
+      })
+
+      const user = guestsdata?.data.filter((item) => {
+        return parseInt(item.id) == parseInt(clientData[0]?.guestId)
+      })
+      if (user) {
+        setbookingsDetails([
+          moment(args.startTime, 'dddd, MMMM D, YYYY ').toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
+          moment(args.endTime, 'dddd, MMMM D, YYYY ').toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
+
+          'Room' + roomIndex,
+          user[0]?.firstname
+            ? user[0]?.firstname
+            : '' + '' + user[0]?.lastname
+            ? user[0]?.lastname
+            : '',
+        ])
+      }
+
+      setIsOpen(true)
     } else {
       args.cancel = true
+      setIsOpen(false)
     }
   }
   const onCellDoubleClick = (args) => {
-    if (args.element.style.backgroundColor == 'rgb(159, 158, 163)') {
+    setIsOpen(false)
+    if (args.element.style.backgroundColor == 'rgb(242, 238, 237)') {
       args.cancel = true
       scheduleObj?.openEditor(args, true)
+    }
+    if (args.element.style.backgroundColor == 'rgb(0, 77, 145)') {
+      args.cancel = true
+      scheduleObj?.openEditor(args, true)
+
       message.info('Room already occupied!')
     } else {
       args.cancel = true
@@ -373,18 +433,36 @@ const Calendar = () => {
 
         return (
           parseInt(item.roomId) === parseInt(roomIndex) &&
-          cellDate <= endDate &&
+          cellDate < endDate &&
           cellDate >= startDate
         )
       })
 
       if (newRooms !== null && newRooms.length > 0) {
-        args.element.style.backgroundColor = '#9f9ea3'
+        newRooms.forEach((element) => {
+          if (element.checkInTime == null || element.checkInTime == undefined) {
+            args.element.style.backgroundColor = '#f2eeed'
+          } else {
+            args.element.style.backgroundColor = '#004D91'
+          }
+        })
+
+        // if (newRooms.checkInTime == null || newRooms.checkInTime == undefined) {
+        //   args.element.style.backgroundColor = '#9f9ea3'
+
+        //   console.log('rooms', newRooms)
+        //   console.log(newRooms.checkInTime)
+        // } else {
+        //   console.log('noo')
+        //   args.element.style.backgroundColor = 'blue'
+        // }
       }
-      
     } else {
       return false
     }
+  }
+  const renderFooter = () => {
+    return <div className='custom-footer'>Custom Footer</div>
   }
 
   return roomsdata !== undefined ? (
@@ -407,8 +485,7 @@ const Calendar = () => {
             height='650px'
             group={{enableCompactView: false, resources: ['MeetingRoom']}}
             eventSettings={{template: editorTemplate}}
-            quickInfoTemplatesHeader={{template:quickInfoTemplatesHeader}}
-            
+            renderFooter={renderFooter.bind(this)}
           >
             <ResourcesDirective>
               <ResourceDirective
@@ -429,6 +506,22 @@ const Calendar = () => {
           </ScheduleComponent>
         </div>
       </div>
+      <Modal
+        open={isOpen}
+        onCancel={cancelModal}
+        title='Booking Details'
+        width={'30%'}
+        okText='Check In'
+        cancelText='Cancel booking'
+      >
+        {bookingsDetails?.length > 0
+          ? bookingsDetails.map((item) => (
+              <div>
+                <p key={item}>{item ? item.toString() : null}</p>
+              </div>
+            ))
+          : ''}
+      </Modal>
     </div>
   ) : (
     <Space size='middle'>
