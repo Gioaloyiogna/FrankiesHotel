@@ -75,41 +75,41 @@ const RoomTypeForm = () => {
   const OnSUbmit = handleSubmit(async (values, event) => {
     event?.preventDefault()
     setLoading(true)
-    const data = {
-      name: values.name,
-      description: values.description,
-      price: values.price,
-      // dob: values.dob,
-      // gender: values.gender,
-      // email: values.email,
-      // maritalStatus: values.maritalStatus,
-      // nationality: values.nationalId,
-      // nationalId: values.nationalId,
-      // phone: values.phone,
-      // alternativePhone: values.alternativePhone,
-      // address: values.address,
-      // residentialAddress: values.residentialAddress,
-      // personalEmail: values.personalEmail,
-      // nextOfKin: values.nextOfKin,
-      // guarantor: values.guarantor,
-      // paygroupId: parseInt(values.paygroupId),
-      // categoryId: parseInt(values.categoryId),
-      // divisionId: parseInt(values.divisionId),
-      // departmentId: parseInt(values.departmentId),
-      // gradeId: parseInt(values.gradeId),
-      // notchId: parseInt(values.notchId),
-      // employmentDate: values.employmentDate,
-      // payType: values.payType,
-      // paymentMethod: selectedPaymentMethod,
-      // bankId: parseInt(values.bankId),
-      // account: values.account,
-      // tin: values.tin,
-      // ssf: values.ssf,
-    }
-    console.log(data)
+    // const data = {
+    //   name: values.name,
+    //   description: values.description,
+    //   price: values.price,
+    //   // dob: values.dob,
+    //   // gender: values.gender,
+    //   // email: values.email,
+    //   // maritalStatus: values.maritalStatus,
+    //   // nationality: values.nationalId,
+    //   // nationalId: values.nationalId,
+    //   // phone: values.phone,
+    //   // alternativePhone: values.alternativePhone,
+    //   // address: values.address,
+    //   // residentialAddress: values.residentialAddress,
+    //   // personalEmail: values.personalEmail,
+    //   // nextOfKin: values.nextOfKin,
+    //   // guarantor: values.guarantor,
+    //   // paygroupId: parseInt(values.paygroupId),
+    //   // categoryId: parseInt(values.categoryId),
+    //   // divisionId: parseInt(values.divisionId),
+    //   // departmentId: parseInt(values.departmentId),
+    //   // gradeId: parseInt(values.gradeId),
+    //   // notchId: parseInt(values.notchId),
+    //   // employmentDate: values.employmentDate,
+    //   // payType: values.payType,
+    //   // paymentMethod: selectedPaymentMethod,
+    //   // bankId: parseInt(values.bankId),
+    //   // account: values.account,
+    //   // tin: values.tin,
+    //   // ssf: values.ssf,
+    // }
+    // console.log(data)
     try {
-      console.log(data)
-      const response = await axios.post(url, data)
+      
+      const response = await axios.post(url, values)
       setSubmitLoading(false)
       reset()
       navigate('/roomType', {replace: true})
@@ -118,7 +118,10 @@ const RoomTypeForm = () => {
       return response.statusText
     } catch (error: any) {
       setSubmitLoading(false)
+      console.log(error.message);
+      
       return error.statusText
+      
     }
   })
 

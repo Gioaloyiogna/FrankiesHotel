@@ -273,27 +273,7 @@ const CheckOut = () => {
       },
     },
 
-    {
-      title: 'Action',
-      fixed: 'right',
-      // width: 20,
-      render: (_: any, record: any) => (
-        <Space size='middle'>
-          <a href='#' className='btn btn-light-danger btn-sm'>
-            Delete
-          </a>
-
-          {/*      
-        <Space size='middle'>
-          {/* <Link to={`/notes-form/${record.id}`}>
-          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'blue', color: 'white' }}>Note</span>
-          </Link> 
-           <Link to={`/employee-edit-form/${record.id}`}>
-          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'Green', color: 'white' }}>Check In</span>
-          </Link> */}
-        </Space>
-      ),
-    },
+    
   ]
   // const {data:allNotes} = useQuery('Notes', fetchNotes, {cacheTime:5000})
 

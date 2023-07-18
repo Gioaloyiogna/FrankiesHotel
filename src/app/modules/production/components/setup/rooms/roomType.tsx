@@ -1,12 +1,12 @@
-import {Button, Form, Input, InputNumber, Modal, Space, Table} from 'antd'
+import {Button, Form, Input, InputNumber, Modal, Space, Table, message} from 'antd'
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../../_metronic/helpers'
 import {BASE_URL} from '../../../urls'
 import {Link} from 'react-router-dom'
 // import { employeedata } from '../../../../../data/DummyData'
-import {useQuery} from 'react-query'
-import {Api_Endpoint, fetchRoomsTypes} from '../../../../../services/ApiCalls'
+import {useMutation, useQuery, useQueryClient} from 'react-query'
+import {Api_Endpoint, deleteRoomTypeApi, fetchRoomsTypes} from '../../../../../services/ApiCalls'
 
 const RoomType = () => {
   const [gridData, setGridData] = useState<any>([])
@@ -18,7 +18,8 @@ const RoomType = () => {
   const [img, setImg] = useState()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {data: roomsdata, isLoading: roomsLoad} = useQuery('rooms', fetchRoomsTypes)
-
+  const {mutate: roomTypeData} = useMutation((id) => deleteRoomTypeApi(id))
+   const queryClient = useQueryClient()
   const showModal = () => {
     setIsModalOpen(true)
   }
@@ -54,6 +55,24 @@ const RoomType = () => {
 
   function handleDelete(element: any) {
     deleteData(element)
+  }
+  const deleteRoomType = (id: any) => {
+    Modal.confirm({
+      okText: 'Yes',
+      okType: 'primary',
+      title: 'Are you sure, you want to delete room type?',
+      onOk: () => {
+        roomTypeData(id, {
+          onSuccess: () => {
+            message.success('Room type  successfully deleted!')
+
+            queryClient.invalidateQueries('rooms')
+            // queryClient.invalidateQueries('Guests')
+            // queryClient.invalidateQueries('rooms')
+          },
+        })
+      },
+    })
   }
   const columns: any = [
     //    {
@@ -210,11 +229,15 @@ const RoomType = () => {
           {/* <Link to={`/employee-edit-form/${record.id}`}>
           <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'blue', color: 'white' }}>Rooms</span>
           </Link> */}
-          <Link to={`/employee-edit-form/${record.id}`}>
-            <a href='#' className='btn btn-light-danger btn-sm'>
-              Delete
-            </a>
-          </Link>
+          {/* <Link to={`/employee-edit-form/${record.id}`}> */}
+          <a
+            href='#'
+            className='btn btn-light-danger btn-sm'
+            onClick={() => deleteRoomType(record.id)}
+          >
+            Delete
+          </a>
+          {/* </Link> */}
 
           {/* <Link to={`/employee-edit-form/${record.id}`}>
             <span className='btn btn-light-info btn-sm'>Update</span>

@@ -11,6 +11,9 @@ export const fetchRoomsTypes= ()=>{
 export const fetchRooms= ()=>{
     return axios.get(`${Api_Endpoint}/rooms`)
 }
+export const fetchServiceCategoryApi= ()=>{
+    return axios.get(`${Api_Endpoint}/Service`)
+}
 export const fetchGuests= ()=>{
     return axios.get(`${Api_Endpoint}/guests`)
 }
@@ -19,6 +22,9 @@ export const fetchNotes= ()=>{
 }
 export const fetchBookings= ()=>{
     return axios.get(`${Api_Endpoint}/Booking`)
+}
+export const fetchServiceDetailsApi= ()=>{
+    return axios.get(`${Api_Endpoint}/ServiceDetails`)
 }
 
 export const GuestCheckinApi=(values:any)=>{
@@ -36,10 +42,24 @@ export const deleteGuestApi=(id:any)=>{
 export const addBookingApi=(values:any)=>{
     return axios.post(`${Api_Endpoint}/Booking`, values)
 }
+export const addCategoryServiceApi=(values:any)=>{
+    return axios.post(`${Api_Endpoint}/ServiceDetails`, values)
+}
 export const deleteNotesApi=(id:any)=>{
     return axios.delete(`${Api_Endpoint}/Notes/${id}`, id)
 }
-
+export const addServiceApi=(values:any)=>{
+    return axios.post(`${Api_Endpoint}/Service/`, values)
+}
+export const cancelBookingApi=(id:any)=>{
+   return axios.delete(`${Api_Endpoint}/Booking/${id}`, id)
+}
+export const deleteRoomTypeApi=(id:any)=>{
+   return axios.delete(`${Api_Endpoint}/RoomsType/${id}`, id);
+}
+export const deleteServiceiceCategoryApi=(id:any)=>{
+    return axios.delete(`${Api_Endpoint}/Service/${id}`,id)
+}
 // export const fetchDivisions= ()=>{
 //     return axios.get(`${Api_Endpoint}/Divisions`)
 // }

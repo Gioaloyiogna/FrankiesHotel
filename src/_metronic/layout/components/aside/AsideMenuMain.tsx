@@ -29,47 +29,48 @@ export function AsideMenuMain() {
         icon='/media/icons/duotune/communication/com013.svg'
         title='Employees' 
       /> */}
-      <AsideMenuItemWithSub 
-        to='#' 
+      <AsideMenuItemWithSub
+        to='#'
         icon='/media/icons/duotune/communication/com013.svg'
-        title='Front Office' >
-          <AsideMenuItem 
-            to='frontOffice/walkIn/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Reservation' 
-          />
-          {/* <AsideMenuItem 
+        title='Front Office'
+      >
+        <AsideMenuItem
+          to='frontOffice/walkIn/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Reservation'
+        />
+        {/* <AsideMenuItem 
             to='frontOffice/reservation/' 
             hasBullet={false} 
             icon='/media/icons/duotune/general/gen028.svg'
             title='Reservation' 
           /> */}
-          <AsideMenuItem
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Room Inventory' 
-          />
-          <AsideMenuItem
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Services' 
-          />
-          <AsideMenuItem
-            to='employee/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Services' 
-          />
-          <AsideMenuItem
-            to='employee/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Billing' 
-          />
-          {/* <AsideMenuItem 
+        <AsideMenuItem
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Room Inventory'
+        />
+        <AsideMenuItem
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Services'
+        />
+        <AsideMenuItem
+          to='employee/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Services'
+        />
+        <AsideMenuItem
+          to='employee/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Billing'
+        />
+        {/* <AsideMenuItem 
             to='frontOffice/reservationList' 
             hasBullet={false} 
             icon='/media/icons/duotune/general/gen028.svg'
@@ -81,7 +82,7 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen028.svg'
             title='New Booking' 
           /> */}
-          {/* <AsideMenuItem 
+        {/* <AsideMenuItem 
             to='employee-report-page/' 
             hasBullet={false} 
             icon='/media/icons/duotune/general/gen028.svg'
@@ -117,8 +118,8 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen028.svg'
             title='Guess Message' 
           /> */}
-         
-          {/* <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/technology/teh004.svg' hasBullet={false}>
+
+        {/* <AsideMenuItemWithSub to='#' title='Setups' icon='/media/icons/duotune/technology/teh004.svg' hasBullet={false}>
           <AsideMenuItem to='setup/#paygroups' hasBullet={true} title='Paygroups' />
           <AsideMenuItem to='setup/#divisions' hasBullet={true} title='Divisions' />
           <AsideMenuItem to='setup/#category' hasBullet={true} title='Categories' />
@@ -129,42 +130,43 @@ export function AsideMenuMain() {
           <AsideMenuItem to='setup/#qualification' hasBullet={true} title='Qualifications' />  
           
         </AsideMenuItemWithSub> */}
-        </AsideMenuItemWithSub>
-        <AsideMenuItemWithSub 
-        to='#' 
+      </AsideMenuItemWithSub>
+      <AsideMenuItemWithSub
+        to='#'
         icon='/media/icons/duotune/communication/com013.svg'
-        title='Back Office' >
-          <AsideMenuItem 
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Night Audit' 
-          />
-          <AsideMenuItem 
-            to='employee-report-page/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen028.svg'
-            title='Billing' 
-          />
-          <AsideMenuItem 
-            to='employee-report-page/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen028.svg'
-            title='Guest Accounting' 
-          />
-          <AsideMenuItem 
-            to='/rooms' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen028.svg'
-            title='Rooms' 
-          />
-          {/* <AsideMenuItem 
+        title='Back Office'
+      >
+        <AsideMenuItem
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Night Audit'
+        />
+        <AsideMenuItem
+          to='employee-report-page/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen028.svg'
+          title='Billing'
+        />
+        <AsideMenuItem
+          to='employee-report-page/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen028.svg'
+          title='Guest Accounting'
+        />
+        <AsideMenuItem
+          to='/rooms'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen028.svg'
+          title='Rooms'
+        />
+        {/* <AsideMenuItem 
             to='employee-report-page/' 
             hasBullet={false} 
             icon='/media/icons/duotune/general/gen028.svg'
             title='Transaction' 
           /> */}
-          {/* <AsideMenuItem 
+        {/* <AsideMenuItem 
             to='employee-report-page/' 
             hasBullet={false} 
             icon='/media/icons/duotune/general/gen028.svg'
@@ -176,7 +178,7 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen028.svg'
             title='Undo Transaction' 
           /> */}
-          {/* <AsideMenuItem 
+        {/* <AsideMenuItem 
             to='employee-report-page/' 
             hasBullet={false} 
             icon='/media/icons/duotune/general/gen028.svg'
@@ -188,8 +190,8 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen028.svg'
             title='Cityledger A/C' 
           /> */}
-        </AsideMenuItemWithSub>
-        {/* <AsideMenuItemWithSub 
+      </AsideMenuItemWithSub>
+      {/* <AsideMenuItemWithSub 
         to='#' 
         icon='/media/icons/duotune/communication/com013.svg'
         title='Tools & Utilities' >
@@ -255,29 +257,26 @@ export function AsideMenuMain() {
           />
         </AsideMenuItemWithSub>
         */}
-        <AsideMenuItemWithSub 
-        to='#' 
-        icon='/media/icons/duotune/communication/com013.svg'
-        title='GRM' >
-          <AsideMenuItem 
-            to='grm/Guests/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Guests' 
-          />
-          <AsideMenuItem 
-            to='grm/Notes/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen028.svg'
-            title='Notes (HR)' 
-          />
-          <AsideMenuItem 
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen028.svg'
-            title='Loyalty' 
-          />
-          {/* <AsideMenuItem 
+      <AsideMenuItemWithSub to='#' icon='/media/icons/duotune/communication/com013.svg' title='GRM'>
+        <AsideMenuItem
+          to='grm/Guests/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Guests'
+        />
+        <AsideMenuItem
+          to='grm/Notes/'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen028.svg'
+          title='Notes (HR)'
+        />
+        <AsideMenuItem
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen028.svg'
+          title='Loyalty'
+        />
+        {/* <AsideMenuItem 
             to='employee-report-page/' 
             hasBullet={false} 
             icon='/media/icons/duotune/general/gen028.svg'
@@ -319,8 +318,8 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen028.svg'
             title='Guest Database' 
           /> */}
-        </AsideMenuItemWithSub>
-        {/* <AsideMenuItemWithSub 
+      </AsideMenuItemWithSub>
+      {/* <AsideMenuItemWithSub 
         to='#' 
         icon='/media/icons/duotune/communication/com013.svg'
         title='Laundry' >
@@ -391,7 +390,7 @@ export function AsideMenuMain() {
             title='Daily Linen' 
           />
         </AsideMenuItemWithSub> */}
-        {/* <AsideMenuItemWithSub 
+      {/* <AsideMenuItemWithSub 
         to='#' 
         icon='/media/icons/duotune/communication/com013.svg'
         title='Banquet' >
@@ -480,91 +479,85 @@ export function AsideMenuMain() {
             title='Posting to Room' 
           />
         </AsideMenuItemWithSub> */}
-        <AsideMenuItem 
-        // <AsideMenuItemWithSub 
-        to='#' 
+      <AsideMenuItem
+        // <AsideMenuItemWithSub
+        to='#'
         icon='/media/icons/duotune/communication/com013.svg'
-        title='House Keeping' >
-        </AsideMenuItem>
-        {/* </AsideMenuItemWithSub> */}
-        <AsideMenuItem 
-        to='#' 
+        title='House Keeping'
+      ></AsideMenuItem>
+      {/* </AsideMenuItemWithSub> */}
+      <AsideMenuItem
+        to='#'
         icon='/media/icons/duotune/communication/com013.svg'
-        title='Reports' >
-        </AsideMenuItem>
+        title='Reports'
+      ></AsideMenuItem>
 
-        <AsideMenuItemWithSub 
-        to='#' 
+      <AsideMenuItemWithSub
+        to='#'
         icon='/media/icons/duotune/communication/com013.svg'
-        title='Setup' >
-          <AsideMenuItemWithSub
-          to='#' 
-            hasBullet={false} 
+        title='Setup'
+      >
+        <AsideMenuItemWithSub
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Rooms'
+        >
+          <AsideMenuItem
+            to='roomType/'
+            hasBullet={false}
             icon='/media/icons/duotune/general/gen005.svg'
-            title='Rooms'>
-              <AsideMenuItem
-            to='roomType/' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Type' 
+            title='Type'
           />
           <AsideMenuItem
             to='/roomDetails'
-            hasBullet={false} 
+            hasBullet={false}
             icon='/media/icons/duotune/general/gen005.svg'
-            title='Details' 
-          />
-          </AsideMenuItemWithSub>
-          <AsideMenuItemWithSub
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Services'>
-<AsideMenuItem
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Category' 
-          />
-          <AsideMenuItem
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Details' 
-          />
-            </AsideMenuItemWithSub>
-          <AsideMenuItem
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='House Keeping Items' 
-          />
-          <AsideMenuItem
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Source' 
-          />
-          <AsideMenuItem
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Source' 
+            title='Details'
           />
         </AsideMenuItemWithSub>
+        <AsideMenuItemWithSub
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Services'
+        >
+          <AsideMenuItem
+            to='/services/category'
+            hasBullet={false}
+            icon='/media/icons/duotune/general/gen005.svg'
+            title='Category'
+          />
+          
+        </AsideMenuItemWithSub>
+        <AsideMenuItem
+          to='/housekeeping'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='House Keeping Items'
+        />
+        
+        <AsideMenuItem
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Source'
+        />
+      </AsideMenuItemWithSub>
 
-        <AsideMenuItemWithSub 
-        to='#' 
+      <AsideMenuItemWithSub
+        to='#'
         icon='/media/icons/duotune/communication/com013.svg'
-        title='Administration' >
-          <AsideMenuItem 
-            to='#' 
-            hasBullet={false} 
-            icon='/media/icons/duotune/general/gen005.svg'
-            title='Audit' 
-          />
-        </AsideMenuItemWithSub>
-      
+        title='Administration'
+      >
+        <AsideMenuItem
+          to='#'
+          hasBullet={false}
+          icon='/media/icons/duotune/general/gen005.svg'
+          title='Audit'
+        />
+      </AsideMenuItemWithSub>
+
       {/* <AsideMenuItemWithSub 
         to='#' 
         icon='/media/icons/duotune/communication/com013.svg'
@@ -596,7 +589,6 @@ export function AsideMenuMain() {
         </AsideMenuItemWithSub>
        */}
 
-      
       {/* <AsideMenuItemWithSub
         to='#'
         title='Human Resource'
@@ -716,8 +708,8 @@ export function AsideMenuMain() {
           <AsideMenuItem to='setup/administration/company' hasBullet={true} title='Company Infos' />
           <AsideMenuItem to='setup/administration/configurations' hasBullet={true} title='Configurations' />
           <AsideMenuItem to='setup/administration/user-management' hasBullet={true} title='User Management' /> */}
-        {/* </AsideMenuItemWithSub> */}
-        {/* <AsideMenuItemWithSub to='#' title='Employee' hasBullet={true}>
+      {/* </AsideMenuItemWithSub> */}
+      {/* <AsideMenuItemWithSub to='#' title='Employee' hasBullet={true}>
           <AsideMenuItem to='setup/#paygroups' hasBullet={true} title='Paygroups' />
           <AsideMenuItem to='setup/#divisions' hasBullet={true} title='Divisions' />
           <AsideMenuItem to='setup/#category' hasBullet={true} title='Categories' />
@@ -726,7 +718,7 @@ export function AsideMenuMain() {
           <AsideMenuItem to='setup/#nationality' hasBullet={true} title='Nationalities' />
           
         </AsideMenuItemWithSub> */}
-        {/* <AsideMenuItemWithSub to='#' title='Human Resource' hasBullet={true}>
+      {/* <AsideMenuItemWithSub to='#' title='Human Resource' hasBullet={true}>
           <AsideMenuItem to='setup/hr/recruitments' hasBullet={true} title='Recruitments' />
           <AsideMenuItem to='setup/hr/training' hasBullet={true} title='Trainings' />
           <AsideMenuItem to='setup/hr/company-assets' hasBullet={true} title='Company Assets' />
@@ -736,7 +728,7 @@ export function AsideMenuMain() {
           <AsideMenuItem to='setup/hr/medical' hasBullet={true} title='Medicals' />
         </AsideMenuItemWithSub> */}
 
-        {/* <AsideMenuItemWithSub to='#' title='Payroll' hasBullet={true}>
+      {/* <AsideMenuItemWithSub to='#' title='Payroll' hasBullet={true}>
           <AsideMenuItem to='setup/payroll/benefit' hasBullet={true} title='Benefits' />
           <AsideMenuItem to='setup/payroll/deduction' hasBullet={true} title='Deductions' />
           <AsideMenuItem to='setup/payroll/saving-scheme' hasBullet={true} title='Saving Schemes' />

@@ -169,7 +169,7 @@ const Notes = () => {
           onSuccess: () => {
             message.success('Note deleted successfully!')
             queryClient.invalidateQueries('Notes')
-             queryClient.invalidateQueries('Guests')
+            queryClient.invalidateQueries('Guests')
             // queryClient.invalidateQueries('rooms')
           },
         })

@@ -1,4 +1,5 @@
 import {Button, Form, Input, InputNumber, Modal, Select, Space, Table, message} from 'antd'
+
 import {useEffect, useState} from 'react'
 import axios from 'axios'
 import {KTCardBody, KTSVG} from '../../../../../../../_metronic/helpers'
@@ -139,7 +140,7 @@ const CheckIn = () => {
     }
   })
   const newFilteredData = data?.filter((e: any) => {
-    return e.checkOutTime == null
+    return e.checkOutTime == null && e.checkInTime !=null
   })
 
   // console.log("roomList", roomsdata?.data);

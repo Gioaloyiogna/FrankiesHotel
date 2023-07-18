@@ -11,62 +11,56 @@ import '@syncfusion/ej2-popups/styles/material.css'
 import '@syncfusion/ej2-splitbuttons/styles/material.css'
 import '@syncfusion/ej2-react-schedule/styles/material.css'
 import '@syncfusion/ej2-buttons/styles/material.css'
-import {Alert, message, Space, Spin} from 'antd'
-import axios from 'axios'
+import {Alert, message, Space, Spin, Button, Input} from 'antd'
 import {L10n} from '@syncfusion/ej2-base'
-import {
-  ScheduleComponent,
-  Month,
-  Day,
-  Week,
-  ViewsDirective,
-  ViewDirective,
-  TimelineViews,
-  TimelineMonth,
-  Inject,
-  ResourcesDirective,
-  ResourceDirective,
-  Resize,
-  DragAndDrop,
-} from '@syncfusion/ej2-react-schedule'
-import {Input, Modal} from 'antd'
 import {
   Api_Endpoint,
   fetchRooms,
   fetchGuests,
   fetchBookings,
+  GuestCheckinApi,
+  fetchRoomsTypes,
 } from '../../../../../../services/ApiCalls'
 import {BASE_URL} from '../../../../urls'
-import './index.css'
-import {useState} from 'react'
-import moment from 'moment'
-import {CalendarOutlined, UserAddOutlined, LayoutOutlined} from '@ant-design/icons'
-//Editing editor buttons
-L10n.load({
-  'en-US': {
-    schedule: {
-      saveButton: 'Book',
-      cancelButton: 'Cancel',
-      deleteButton: 'Remove',
-      newEvent: 'Book Room',
-    },
-  },
-})
 
+import './index.css'
+import * as React from 'react'
+import {useEffect, useRef, useState} from 'react'
+import {axios} from 'axios'
+import {
+  ScheduleComponent,
+  ViewsDirective,
+  ViewDirective,
+  TimelineViews,
+  TimelineMonth,
+  Inject,
+  Week,
+  Month,
+  ResourcesDirective,
+  ResourceDirective,
+  Resize,
+  DragAndDrop,
+} from '@syncfusion/ej2-react-schedule'
+
+import {extend, isNullOrUndefined} from '@syncfusion/ej2-base'
+import {DataManager, WebApiAdaptor, UrlAdaptor, Query} from '@syncfusion/ej2-data'
+import dataSource from './datasource.json'
+import Item from 'antd/es/list/Item'
+/**
+ * schedule room scheduler sample
+ */
 const Calendar = () => {
-  let scheduleObj
-  let queryClient = useQueryClient()
   const {data: roomsdata} = useQuery('rooms', fetchRooms)
   const {data: guestsdata} = useQuery('guests', fetchGuests)
   const {data: bookingsdata} = useQuery('bookings', fetchBookings)
   const {mutate: addNewBooking} = useMutation((values) => axios.post(`${BASE_URL}/Booking`, values))
+  const {data: roomsTypes} = useQuery('roomType', fetchRoomsTypes)
   const [isOpen, setIsOpen] = useState(false)
   const [bookingsDetails, setbookingsDetails] = useState([])
+  const {mutate: checkGuestInQuery} = useMutation((values) => GuestCheckinApi(values))
 
-  // console.log('Guests ',guestsdata)
-  // console.log('Guests ',guestsdata?.data[0])
-  // console.log('Rooms ',roomsdata?.data[0])
-  // console.log('Booking ',bookingsdata?.data)
+  const data = extend([], dataSource.roomData, null, true)
+  const {data: bookingdata} = useQuery('bookingdata', fetchBookings)
   const listData = guestsdata?.data.map((e) => {
     // console.log('e',e?.firstname+' '+e?.lastname)
     return {
@@ -74,148 +68,73 @@ const Calendar = () => {
       name: e?.firstname + ' ' + e?.lastname,
     }
   })
+  L10n.load({
+    'en-US': {
+      schedule: {
+        saveButton: 'Save',
+        cancelButton: 'Close',
+        deleteButton: 'Cancel Booking',
 
-  const onActionBegin = (args) => {
-    // console.log('first args', args)
-    // args.cancel = true
-    // console.log('args', args)
+        newEvent: 'Add Booking',
+        editEvent: 'Booking Details',
+      },
+    },
+  })
 
-    if (args.data !== undefined) {
-      const data = args.data[0] ? args.data[0] : args.data
-      // console.log(args?.data[0].Room)
-      // console.log(roomsdata?.data.filter(e=>e.name===args?.data[0].Room))
-      const dat = roomsdata?.data.find((e) => e.name === args?.data[0].Room)
-      // console.log('dat ',dat);
-      // console.log('dat.id ',dat['id']);
-      // for (let index = 0; index < roomsdata?.data.length; index++) {
-      //   // const element = array[index];
+  let scheduleObj = useRef(null)
+  let filteredBookings = []
+  const allBookings = bookingdata?.data.map((item) => {
+    const allGuests = guestsdata?.data.filter((data) => {
+      return data.id == item.guestId
+    })
+    filteredBookings.push({
+      Id: item.id,
+      Subject: allGuests ? allGuests[0].firstname : null,
+      StartTime: item.bookStart,
+      EndTime: item.bookEnd,
+      RoomId: item.roomId,
+      checkInTime: item.checkInTime,
+    })
+    return item
+  })
 
-      // }
-      //Save
-      if (args.requestType === 'eventCreate') {
-        // console.log("This one here")
-        const bookingSchedule = {
-          // room: roomsdata?.data[args?.data?.Id-1]?.id,
-          roomId: dat['id'],
-          bookStart: data.StartTime,
-          bookEnd: data.EndTime,
-          guestId: data.guests,
-          timestamp: new Date(),
-          // gameTypeId: data.gameType,
-        }
+  const roomsArr = []
+  const joinedData = roomsdata?.data.filter((room) => {
+    const matchingType = roomsTypes?.data.find((type) => type.id === room.typeId)
 
-        console.log('data data', bookingsdata?.data)
-        // if (args.elementType === 'monthCells' && bookingsdata?.data) {
-        //   const roomIndex = parseInt(args.element.getAttribute('data-group-index')) + 1
-
-        //   const cellDate = new Date(parseInt(args.element.getAttribute('data-date')))
-        //     .toISOString()
-        //     .split('T')[0]
-
-        //   const newRooms = bookingsdata?.data.filter((item) => {
-        //     const startDate = new Date(item.bookStart).toISOString().split('T')[0]
-        //     const endDate = new Date(item.bookEnd).toISOString().split('T')[0]
-
-        //     return (
-        //       parseInt(item.roomId) === parseInt(roomIndex) &&
-        //       cellDate <= endDate &&
-        //       cellDate >= startDate
-        //     )
-        //   })
-
-        //   if (newRooms !== null && newRooms.length > 0) {
-        //     args.element.style.backgroundColor = '#9f9ea3'
-        //   }
-        //   console.log('data', bookingsdata?.data)
-        // } else {
-        //   return false
-        // }
-        const filteredData = bookingsdata?.data.filter((item) => {
-          const startDate = new Date(item.bookStart).toISOString().split('T')[0]
-          const endDate = new Date(item.bookEnd).toISOString().split('T')[0]
-          const startTime = new Date(data.StartTime).toISOString().split('T')[0]
-          const endTime = new Date(data.EndTime).toISOString().split('T')[0]
-          return (
-            startDate <= endTime &&
-            startDate >= startTime &&
-            endDate <= endTime &&
-            endDate >= startTime
-          )
-        })
-
-        if (filteredData.length > 0) {
-          message.info('Room might have been reserved on the specified date!')
-          return
-        } else {
-          addNewBooking(bookingSchedule, {
-            onSuccess: () => {
-              message.success('Booking made successfully')
-              queryClient.invalidateQueries('bookings')
-            },
-            onError: (error) => {
-              message.error('Booking failed')
-            },
-          })
-        }
-        // addNewBooking(bookingSchedule, {
-        //   onSuccess: () => {
-        //     message.success('Booking made successfully')
-        //     queryClient.invalidateQueries('bookings')
-        //   },
-        //   onError: (error) => {
-        //     message.error('Booking failed')
-        //   },
-        // })
-      }
-
-      //Edit
-      if (args.requestType === 'eventChange') {
-        console.log('gameSchedule Edit', args)
-        const gameSchedule = {
-          id: data.id,
-          subject: data.Subject,
-          startTime: data.StartTime,
-          endTime: data.EndTime,
-          description: data.guest,
-          gameTypeId: data.gameType,
-        }
-        // updateGameSchedule(gameSchedule)
-      }
-
-      if (args.requestType === 'eventRemove') {
-        // deleteGameSchedule(data)
-      }
+    if (matchingType) {
+      var roomObj = {roomId: room.id, roomName: room.name, roomType: matchingType.name}
+      roomsArr.push(roomObj)
+      return roomObj
+    } else {
+      return false
     }
+  })
+
+  const getRoomName = (value) => {
+    return value.resourceData[value.resource.textField]
   }
-  // console.log('gameType', gameType)
-  let dropDownListObject //to access the dropdownlist component
-  function editorTemplate(props) {
-    // console.log('props in editor ', props)
-    // console.log('roomName ', roomName)
-    // console.log('props ', props['Name'])
-    // console.log('props ', props['StartTime'])
-    var startT = props['StartTime']
-    var Room = props['Name']
+  const getRoomType = (value) => {
+    return value.resourceData.roomType
+  }
+  const getRoomCapacity = (value) => {
+    return value.resourceData.capacity
+  }
+  const isReadOnly = (endDate) => {
+    return endDate < new Date(2021, 6, 31, 0, 0)
+  }
+  const resourceHeaderTemplate = (props) => {
+    return (
+      <div className='template-wrap'>
+        <div className='room-name'>{getRoomName(props)}</div>
+        <div className='room-type'>{getRoomType(props)}</div>
+      </div>
+    )
+  }
+  const editorTemplate = (props) => {
     return props !== undefined ? (
       <table className='custom-event-editor' style={{width: '100%'}} cellPadding={5}>
         <tbody>
-          <tr>
-            <td className='e-textlabel'>Room</td>
-            <td colSpan={4}>
-              <input
-                id='title'
-                placeholder='Room'
-                data-name='Room'
-                name='Room'
-                className='e-field e-input'
-                type='text'
-                style={{width: '100%'}}
-                defaultValue={roomsdata?.data[props['Name'] - 1]?.name}
-                disabled
-              />
-            </td>
-          </tr>
-
           <tr>
             <td className='e-textlabel'>Guest</td>
             <td colSpan={4}>
@@ -226,11 +145,30 @@ const Calendar = () => {
                 className='e-field'
                 dataSource={listData}
                 fields={{text: 'name', value: 'id'}}
-                // value={props && props.gameTypeId ? props.gameTypeId : null}
+                //value={props && props.gameTypeId ? props.gameTypeId : null}
+                value={props.Subject}
                 style={{width: '100%'}}
               />
             </td>
           </tr>
+
+          <tr>
+            <td className='e-textlabel'>Room</td>
+            <td colSpan={4}>
+              <input
+                id='RoomId'
+                placeholder='Room'
+                data-name='RoomId'
+                name='RoomId'
+                className='e-field e-input'
+                type='text'
+                style={{width: '100%'}}
+                value={`Room ${props.RoomId}`}
+                disabled
+              />
+            </td>
+          </tr>
+
           <tr>
             <td className='e-textlabel'>From</td>
             <td colSpan={4}>
@@ -241,7 +179,7 @@ const Calendar = () => {
                 name={'StartTime'}
                 // defaultValue={startT}
                 value={props['StartTime'] ? props['StartTime'] : props['StartTime']}
-                // disabled
+                disabled
                 className='e-field'
               ></DateTimePickerComponent>
             </td>
@@ -254,7 +192,7 @@ const Calendar = () => {
                 format='dd/MM/yy hh:mm a'
                 data-name='EndTime'
                 name={'EndTime'}
-                value={props && props['EndTime'] ? new Date(props['EndTime']) : props['EndTime']}
+                value={new Date(props.EndTime || props.enTime)}
                 className='e-field'
               ></DateTimePickerComponent>
             </td>
@@ -265,263 +203,132 @@ const Calendar = () => {
       message.error('Please select an event')
     )
   }
-  function quickInfoTemplatesHeader(props) {
-    console.log('props', props)
+  const onActionBegin = (args) => {
+    console.log('ghio', args)
+    // if (args.requestType === 'eventCreate') {
+    //   let data = args.data instanceof Array ? args.data[0] : args.data
+    //   args.cancel = !scheduleObj.current.isSlotAvailable(data)
+    //   console.log(args)
+    // }
   }
-
-  // let onCellClick = (args) => {
-  //   // console.log('args ',args)
-  //   const today = new Date(Date.now())
-  //   const startTime = new Date(args.startTime)
-  //   // console.log('today ',today)
-  //   // console.log('startTime ',startTime)
-  //   // if (today<=startTime) {
-  //   args.cancel = true
-  //   scheduleObj?.openEditor(args, false)
-  //   // args.element.style.backgroundColor ==='blue'
-  //   // }
-  //   // else{
-  //   //   args.cancel = true
-  //   //  message.info('Cannot set events for past days!')
-
-  //   // }
-  // }
-  let cancelModal = () => {
-    setIsOpen(false)
+  const onEventRendered = (args) => {
+    let data = args.data
+    if (isReadOnly(data.EndTime)) {
+      args.element.setAttribute('aria-readonly', 'true')
+      args.element.classList.add('e-read-only')
+    }
   }
-  let onCellClick = (args) => {
-    if (args.element.style.backgroundColor == 'rgb(242, 238, 237)') {
-      setbookingsDetails({})
-      args.cancel = true
-      const roomIndex = parseInt(args.element.getAttribute('data-group-index')) + 1
-      const startDate = moment(args.startTime, 'dddd, MMMM D, YYYY [at] HH:mm')
-        .toISOString()
-        .split('T')[0]
-      const endDate = moment(args.endTime, 'dddd, MMMM D, YYYY [at] HH:mm')
-        .toISOString()
-        .split('T')[0]
-      const clientData = bookingsdata?.data.filter((item) => {
-        const bookstart = new Date(item.bookStart).toISOString().split('T')[0]
-        const bookend = new Date(item.bookEnd).toISOString().split('T')[0]
-        console.log('start', bookstart)
-        console.log('end', bookend)
-        console.log('room', item.roomId, roomIndex)
-        return startDate >= bookstart && parseInt(item.roomId) == roomIndex && endDate <= bookend
-      })
+  const onRenderCell = (args) => {
+    // if (args.elementType === 'monthCells') {
+    //     scheduleObj?.current.eventsData.map((item)=>{
+    //       if (item.checkInTime!=null || item.checkInTime != undefined) {
+    //         args.element.style.backgroundColor='red'
+    //       }
+    //     })
+    // }
 
-      const user = guestsdata?.data.filter((item) => {
-        return parseInt(item.id) == parseInt(clientData[0]?.guestId)
-      })
-      if (user) {
-        setbookingsDetails([
-          moment(args.startTime, 'dddd, MMMM D, YYYY ').toLocaleString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }),
-          moment(args.endTime, 'dddd, MMMM D, YYYY ').toLocaleString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }),
-
-          'Room' + roomIndex,
-          user[0]?.firstname
-            ? user[0]?.firstname
-            : '' + '' + user[0]?.lastname
-            ? user[0]?.lastname
-            : '',
-        ])
+    // if (args.element.classList.contains('e-work-cells')) {
+    //   if (args.date < new Date(2021, 6, 31, 0, 0)) {
+    //     args.element.setAttribute('aria-readonly', 'true')
+    //     args.element.classList.add('e-read-only-cells')
+    //   }
+    // }
+    if (
+      args.elementType === 'emptyCells' &&
+      args.element.classList.contains('e-resource-left-td')
+    ) {
+      let target = args.element.querySelector('.e-resource-text')
+      target.innerHTML =
+        '<div class="d-flex justify-content-between"> <div class="name">Rooms</div><div class="type">Rooms Type</div></div>'
+    }
+  }
+  const handleDataSave = () => {
+    console.log('hehj')
+  }
+  const onPopupOpen = (args) => {
+    let data = args.data
+    if (
+      args.type === 'QuickInfo' ||
+      args.type === 'Editor' ||
+      args.type === 'RecurrenceAlert' ||
+      args.type === 'DeleteAlert'
+    ) {
+      let target =
+        args.type === 'RecurrenceAlert' || args.type === 'DeleteAlert'
+          ? args.element[0]
+          : args.target
+      if (!isNullOrUndefined(target) && target.classList.contains('e-work-cells')) {
+        if (
+          target.classList.contains('e-read-only-cells') ||
+          !scheduleObj.current.isSlotAvailable(data)
+        ) {
+          args.cancel = true
+        }
+      } else if (
+        !isNullOrUndefined(target) &&
+        target.classList.contains('e-appointment') &&
+        isReadOnly(data.EndTime)
+      ) {
+        args.cancel = true
       }
-
-      setIsOpen(true)
-    } else {
-      args.cancel = true
-      setIsOpen(false)
     }
   }
-  const onCellDoubleClick = (args) => {
-    setIsOpen(false)
-    if (args.element.style.backgroundColor == 'rgb(242, 238, 237)') {
-      args.cancel = true
-      scheduleObj?.openEditor(args, true)
-    }
-    if (args.element.style.backgroundColor == 'rgb(0, 77, 145)') {
-      args.cancel = true
-      scheduleObj?.openEditor(args, true)
-
-      message.info('Room already occupied!')
-    } else {
-      args.cancel = true
-      scheduleObj?.openEditor(args, 'Add', false)
-    }
-  }
-  function onEventRendered(args) {
-    // console.log("this args ", args)
-    if (!args.element || !args.data) {
-      return
-    }
-  }
-  const book = bookingsdata?.data
-  // console.log(book)
-  function test(e) {
-    book?.find((x) => {
-      // console.log("x", x)
-
-      if (x.bookStart === '2023-06-03T00:00:00') {
-        return x
-      }
-    })
-  }
-
-  // renderCell(args) {
-  //   const currentDate = new Date(); // Get the current date
-  //   const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 3); // 3 days before current date
-  //   const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 27); // 27 days after current date
-
-  //   const dateRange = [];
-  //   const currentDateIndex = args.dates.findIndex(date => date.toDateString() === currentDate.toDateString());
-
-  //   // Generate the date range from 3 days before current date to 27 days afterwards
-  //   for (let i = currentDateIndex - 3; i <= currentDateIndex + 27; i++) {
-  //     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
-  //     dateRange.push(date);
-  //   }
-
-  //   // Render the cells with the generated date range
-  //   return dateRange.map((date, index) => {
-  //     return (
-  //       <div key={index}>
-  //         {date.getDate()}
-  //       </div>
-  //     );
-  //   });
-  // }
-
-  // function onRenderCell(args) {
-  //   var today = new Date()
-  //   args.date = today
-  //   console.log('ARGS ', args.date, 'today', today)
-  //   if (args.date) {
-  //     if (args.elementType === 'monthCells') {
-  //       const formattedDate = new Date(args.date).toISOString().split('T')[0]
-  //       bookingsdata?.data.find((e) => {
-  //         if (
-  //           new Date(e['bookStart']).toISOString().split('T')[0] === formattedDate &&
-  //           e['roomId'] === 2
-  //         ) {
-  //           return args.element.classList.add('e-public-holiday')
-  //         }
-  //       })
-  //     }
-  //   }
-  // }
-
-  function onRenderCell(args) {
-    if (args.elementType === 'monthCells' && bookingsdata?.data) {
-      const roomIndex = parseInt(args.element.getAttribute('data-group-index')) + 1
-
-      const cellDate = new Date(parseInt(args.element.getAttribute('data-date')))
-        .toISOString()
-        .split('T')[0]
-
-      const newRooms = bookingsdata?.data.filter((item) => {
-        const startDate = new Date(item.bookStart).toISOString().split('T')[0]
-        const endDate = new Date(item.bookEnd).toISOString().split('T')[0]
-
-        return (
-          parseInt(item.roomId) === parseInt(roomIndex) &&
-          cellDate < endDate &&
-          cellDate >= startDate
-        )
-      })
-
-      if (newRooms !== null && newRooms.length > 0) {
-        newRooms.forEach((element) => {
-          if (element.checkInTime == null || element.checkInTime == undefined) {
-            args.element.style.backgroundColor = '#f2eeed'
-          } else {
-            args.element.style.backgroundColor = '#004D91'
-          }
-        })
-
-        // if (newRooms.checkInTime == null || newRooms.checkInTime == undefined) {
-        //   args.element.style.backgroundColor = '#9f9ea3'
-
-        //   console.log('rooms', newRooms)
-        //   console.log(newRooms.checkInTime)
-        // } else {
-        //   console.log('noo')
-        //   args.element.style.backgroundColor = 'blue'
-        // }
-      }
-    } else {
-      return false
-    }
-  }
-  const renderFooter = () => {
-    return <div className='custom-footer'>Custom Footer</div>
-  }
-
-  return roomsdata !== undefined ? (
+  return roomsArr != undefined && filteredBookings != null ? (
     <div className='schedule-control-section'>
       <div className='col-lg-12 control-section'>
         <div className='control-wrapper'>
           <ScheduleComponent
             cssClass='timeline-resource'
-            dateFormat='dd MM yyyy'
-            currentView='TimelineMonth'
-            ref={(t) => (scheduleObj = t)}
-            actionBegin={onActionBegin}
-            editorTemplate={editorTemplate}
-            eventRendered={onEventRendered}
-            cellClick={onCellClick}
-            renderCell={onRenderCell.bind(this)}
-            cellDoubleClick={onCellDoubleClick}
-            loading={true}
+            ref={scheduleObj}
             width='100%'
             height='650px'
+            selectedDate={new Date()}
+            workHours={{start: '08:00', end: '18:00'}}
+            timeScale={{interval: 60, slotCount: 1}}
+            resourceHeaderTemplate={resourceHeaderTemplate}
+            editorTemplate={editorTemplate}
+            allowDragAndDrop={false}
+            allowMultiCellSelection={false}
+            editorSave={handleDataSave}
+            eventSettings={{
+              dataSource: filteredBookings,
+              fields: {
+                id: 'Id',
+                subject: {title: 'Guest', name: 'Subject'},
+                //   description: {title: 'Comments', name: 'Description'},
+                startTime: {title: 'From', name: 'StartTime'},
+                endTime: {title: 'To', name: 'EndTime'},
+              },
+            }}
+            eventRendered={onEventRendered}
+            popupOpen={onPopupOpen}
+            actionBegin={onActionBegin}
+            renderCell={onRenderCell}
             group={{enableCompactView: false, resources: ['MeetingRoom']}}
-            eventSettings={{template: editorTemplate}}
-            renderFooter={renderFooter.bind(this)}
           >
             <ResourcesDirective>
               <ResourceDirective
-                field='Name'
-                title='Name'
+                field='RoomId'
+                title='Room Type'
                 name='MeetingRoom'
                 allowMultiple={true}
-                dataSource={roomsdata?.data}
-                textField='name'
-                idField='id'
+                dataSource={roomsArr}
+                textField='roomName'
+                idField='roomId'
                 colorField='color'
-              ></ResourceDirective>
+              />
             </ResourcesDirective>
+
             <ViewsDirective>
+              {/* <ViewDirective option='TimelineDay' />
+              <ViewDirective option='TimelineWeek' /> */}
               <ViewDirective option='TimelineMonth' />
             </ViewsDirective>
             <Inject services={[TimelineViews, TimelineMonth, Week, Month, Resize, DragAndDrop]} />
+            {/* <Inject services={[TimelineViews, Resize, DragAndDrop]} /> */}
           </ScheduleComponent>
         </div>
       </div>
-      <Modal
-        open={isOpen}
-        onCancel={cancelModal}
-        title='Booking Details'
-        width={'30%'}
-        okText='Check In'
-        cancelText='Cancel booking'
-      >
-        {bookingsDetails?.length > 0
-          ? bookingsDetails.map((item) => (
-              <div>
-                <p key={item}>{item ? item.toString() : null}</p>
-              </div>
-            ))
-          : ''}
-      </Modal>
     </div>
   ) : (
     <Space size='middle'>
@@ -530,190 +337,3 @@ const Calendar = () => {
   )
 }
 export {Calendar}
-
-// import {L10n} from '@syncfusion/ej2-base'
-// import { ScheduleComponent,Month,Day,Week, ViewsDirective, ViewDirective, TimelineViews,TimelineMonth, Inject, ResourcesDirective, ResourceDirective, Resize, DragAndDrop } from '@syncfusion/ej2-react-schedule';
-// import {DateTimePickerComponent} from '@syncfusion/ej2-react-calendars'
-// import {DropDownListComponent} from '@syncfusion/ej2-react-dropdowns'
-// import {useMutation, useQuery, useQueryClient} from 'react-query'
-// import '@syncfusion/ej2-base/styles/material.css'
-// import '@syncfusion/ej2-calendars/styles/material.css'
-// import '@syncfusion/ej2-dropdowns/styles/material.css'
-// import '@syncfusion/ej2-inputs/styles/material.css'
-// import '@syncfusion/ej2-lists/styles/material.css'
-// import '@syncfusion/ej2-navigations/styles/material.css'
-// import '@syncfusion/ej2-popups/styles/material.css'
-// import '@syncfusion/ej2-splitbuttons/styles/material.css'
-// import '@syncfusion/ej2-react-schedule/styles/material.css'
-// import '@syncfusion/ej2-buttons/styles/material.css'
-// import {Input, message} from 'antd'
-// import { Api_Endpoint, fetchRooms } from '../../../../../../services/ApiCalls'
-// import CustomEventTooltip from './CustomEventTooltip';
-
-// //Editing editor buttons
-// L10n.load({
-//   'en-US': {
-//     schedule: {
-//       saveButton: 'Book',
-//       cancelButton: 'Cancel',
-//       deleteButton: 'Remove',
-//       newEvent: 'Booking',
-//     },
-//   },
-// })
-
-// const Calendar = ({chosenFilter}) => {
-//   const eventSettings = {
-//     template: CustomEventTooltip // Set the custom tooltip component as the template
-//   };
-//   const {data: roomsdata, isLoading: roomsLoad} = useQuery('rooms', fetchRooms)
-//   const queryClient = useQueryClient()
-
-//   let onCellClick = (args)=>{
-//     args.cancel=true;
-// console.log(args);
-//   }
-
-//   return (
-//     <div className='schedule-control-section'>
-//       <div className='col-lg-12 control-section'>
-//         <div className='control-wrapper'>
-//           <ScheduleComponent
-//           cssClass='timeline-resource'
-//           dateFormat='dd MM yyyy'
-//           currentView='TimelineMonth'
-//           onClick={onCellClick}
-//           width='100%' group={{ enableCompactView: false, resources: ['MeetingRoom'] }}>
-//                         <ResourcesDirective>
-//                             <ResourceDirective field='Name' title='Name' name='MeetingRoom' allowMultiple={true} dataSource={roomsdata?.data} textField='name' idField='id' colorField='color'>
-//                             </ResourceDirective>
-//                         </ResourcesDirective>
-//                         <ViewsDirective>
-//                             <ViewDirective option='TimelineMonth'/>
-//                         </ViewsDirective>
-//                         <Inject services={[TimelineViews,TimelineMonth,Week, Month, Resize, DragAndDrop]}/>
-//                     </ScheduleComponent>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
-// export {Calendar}
-
-// import * as React from 'react';
-// import { ScheduleComponent,Month,Day,Week, ViewsDirective, ViewDirective, TimelineViews,TimelineMonth, Inject, ResourcesDirective, ResourceDirective, Resize, DragAndDrop } from '@syncfusion/ej2-react-schedule';
-// import './RoomSchedulerTemplate.css';
-// import { extend, isNullOrUndefined } from '@syncfusion/ej2-base';
-// import * as dataSource from './datasource.json';
-
-// function Calendar(chosenFilter) {
-//   const timeScale = {
-//     enable: true,
-//     majorSlotTemplate: (date, type) => {
-//       if (type === 'TimelineMonth') {
-//         return null;
-//       }
-//       const index = Math.floor((date.getHours() * 60 + date.getMinutes()) / 30);
-//       return (
-//         <div>{ownerData[index]}</div>
-//       );
-//     },
-//     minorSlotTemplate: (date) => {
-//       return null;
-//     }
-//   };
-
-//     const data = extend([], dataSource, null, true);
-//     let scheduleObj;
-//     const ownerData = [
-//         { text: 'Room 1', id: 1},
-//         { text: 'Room 2', id: 2},
-//         { text: 'Room 3', id: 3},
-//         { text: 'Room 4', id: 4},
-//         { text: 'Room 5', id: 5},
-//         { text: 'Room 6', id: 6},
-//         { text: 'Room 7', id: 7},
-//         { text: 'Room 8', id: 8},
-//         { text: 'Room 9', id: 9},
-//         { text: 'Room 10', id: 10},
-//         { text: 'Room 11', id: 11},
-//         { text: 'Room 12', id: 12},
-//     ];
-//     function getRoomName(value) {
-//         return value.resourceData[value.resource.textField];
-//     }
-//     function isReadOnly(endDate) {
-//         return (endDate < new Date(2021, 6, 31, 0, 0));
-//     }
-//     function resourceHeaderTemplate(props) {
-//         return (<div className="template-wrap">
-//             <div className="room-name">{getRoomName(props)}</div>
-//         </div>);
-//     }
-//     function onActionBegin(args) {
-//         if (args.requestType === 'eventCreate' || args.requestType === 'eventChange') {
-//             let data = args.data instanceof Array ? args.data[0] : args.data;
-//             args.cancel = !scheduleObj.isSlotAvailable(data);
-//         }
-//     }
-//     function onEventRendered(args) {
-//         let data = args.data;
-//         if (isReadOnly(data.EndTime)) {
-//             args.element.setAttribute('aria-readonly', 'true');
-//             args.element.classList.add('e-read-only');
-//         }
-//     }
-//     function onRenderCell(args) {
-//         if (args.element.classList.contains('e-work-cells')) {
-//             if (args.date < new Date(2021, 6, 31, 0, 0)) {
-//                 args.element.setAttribute('aria-readonly', 'true');
-//                 args.element.classList.add('e-read-only-cells');
-//             }
-//         }
-//         if (args.elementType === 'emptyCells' && args.element.classList.contains('e-resource-left-td')) {
-//             let target = args.element.querySelector('.e-resource-text');
-//             target.innerHTML = '<div class="name">Rooms</div>';
-//         }
-//     }
-//     function onPopupOpen(args) {
-//         let data = args.data;
-//         if (args.type === 'QuickInfo' || args.type === 'Editor' || args.type === 'RecurrenceAlert' || args.type === 'DeleteAlert') {
-//             let target = (args.type === 'RecurrenceAlert' ||
-//                 args.type === 'DeleteAlert') ? args.element[0] : args.target;
-//             if (!isNullOrUndefined(target) && target.classList.contains('e-work-cells')) {
-//                 if ((target.classList.contains('e-read-only-cells')) ||
-//                     (!scheduleObj.isSlotAvailable(data))) {
-//                     args.cancel = true;
-//                 }
-//             }
-//         }
-//     }
-//     return (<div className='schedule-control-section'>
-//             <div className='col-lg-12 control-section'>
-//                 <div className='control-wrapper'>
-//                     <ScheduleComponent cssClass='timeline-resource' dateFormat='dd MM yyyy' currentView='TimelineMonth' ref={schedule => scheduleObj = schedule} width='100%' eventSettings={{
-//                         template: timeScale,
-//             fields: {
-//                 id: 'Id',
-//                 subject: { title: 'Summary', name: 'Subject' },
-//                 location: { title: 'Location', name: 'Location' },
-//                 description: { title: 'Comments', name: 'Description' },
-//                 startTime: { title: 'From', name: 'StartTime' },
-//                 endTime: { title: 'To', name: 'EndTime' }
-//             }
-//         }} eventRendered={onEventRendered.bind(this)} popupOpen={onPopupOpen.bind(this)} actionBegin={onActionBegin.bind(this)} renderCell={onRenderCell.bind(this)} group={{ enableCompactView: false, resources: ['MeetingRoom'] }}>
-//                         <ResourcesDirective>
-//                             <ResourceDirective field='RoomId' title='Room Type' name='MeetingRoom' allowMultiple={true} dataSource={ownerData} textField='text' idField='id' colorField='color'>
-//                             </ResourceDirective>
-//                         </ResourcesDirective>
-//                         <ViewsDirective>
-//                             <ViewDirective option='TimelineMonth'/>
-//                         </ViewsDirective>
-//                         <Inject services={[TimelineViews,TimelineMonth,Week, Month, Resize, DragAndDrop]}/>
-//                     </ScheduleComponent>
-//                 </div>
-//             </div>
-
-//         </div>);
-// }
-// export default Calendar;
