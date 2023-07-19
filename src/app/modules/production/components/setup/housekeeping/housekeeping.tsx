@@ -31,6 +31,8 @@ const HouseKeeping = () => {
   const {mutate: deleteServiceCategoryData} = useMutation((id: any) =>
     deleteServiceiceCategoryApi(id)
   )
+  console.log('servir', categoryData);
+  
   const [openNoteModal, setopenNoteModal] = useState(false)
   const parms: any = useParams()
   const queryClient = useQueryClient()

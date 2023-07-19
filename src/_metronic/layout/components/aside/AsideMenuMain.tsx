@@ -58,12 +58,7 @@ export function AsideMenuMain() {
           icon='/media/icons/duotune/general/gen005.svg'
           title='Services'
         />
-        <AsideMenuItem
-          to='employee/'
-          hasBullet={false}
-          icon='/media/icons/duotune/general/gen005.svg'
-          title='Services'
-        />
+        
         <AsideMenuItem
           to='employee/'
           hasBullet={false}

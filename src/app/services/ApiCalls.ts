@@ -26,7 +26,9 @@ export const fetchBookings= ()=>{
 export const fetchServiceDetailsApi= ()=>{
     return axios.get(`${Api_Endpoint}/ServiceDetails`)
 }
-
+export const fetchHouseKeepingApi=()=>{
+    return axios.get(`${Api_Endpoint}/HouseKeeping`)
+}
 export const GuestCheckinApi=(values:any)=>{
     return axios.put(`${Api_Endpoint}/Booking/CheckIn`, values);
 }

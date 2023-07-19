@@ -9,6 +9,7 @@ import {QueryClient, useMutation, useQuery, useQueryClient} from 'react-query'
 import {
   Api_Endpoint,
   addCategoryServiceApi,
+  fetchHouseKeepingApi,
   fetchRooms,
   fetchServiceDetailsApi,
 } from '../../../../../services/ApiCalls'
@@ -24,6 +25,7 @@ const Housekeepingitems = () => {
   const [img, setImg] = useState()
   const queryClient = useQueryClient()
   const {data: serviceDetailsData} = useQuery('fetchServiceDetails', fetchServiceDetailsApi)
+  const {data:HouseKeepingData}=useQuery('fetchItems', fetchHouseKeepingApi)
   const {mutate: addServiceCategoryData} = useMutation((values: any) =>
     addCategoryServiceApi(values)
   )
@@ -86,7 +88,7 @@ const Housekeepingitems = () => {
     },
     {
       title: 'Quantity',
-      dataIndex: 'price',
+      dataIndex: 'quantity',
       sorter: (a: any, b: any) => {
         if (a.name > b.name) {
           return 1
@@ -182,7 +184,7 @@ const Housekeepingitems = () => {
               </button>
             </Space>
           </div>
-          <Table columns={columns} className='table-responsive' />
+          <Table columns={columns} className='table-responsive' dataSource={HouseKeepingData?.data}/>
         </div>
         <Modal
           open={openNoteModal}
