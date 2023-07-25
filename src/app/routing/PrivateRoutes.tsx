@@ -73,6 +73,7 @@ import {Category} from '../modules/production/components/setup/services/Category
 import {Details} from '../modules/production/components/setup/services/Details'
 import {HouseKeeping} from '../modules/production/components/setup/housekeeping/housekeeping'
 import {Housekeepingitems} from '../modules/production/components/setup/housekeeping/housekeepingitems'
+import { Service } from '../modules/production/components/frontOffice/service/service'
 
 const accountBreadCrumbs: Array<PageLink> = [
   {
@@ -275,12 +276,22 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
+        
         <Route
           path='/housekeeping/:id'
           element={
             <SuspensedView>
               <PageTitle breadcrumbs={accountBreadCrumbs}>House Keeping Items</PageTitle>
               <Housekeepingitems />
+            </SuspensedView>
+          }
+        />
+         <Route
+          path='/front-office/service'
+          element={
+            <SuspensedView>
+              <PageTitle breadcrumbs={accountBreadCrumbs}>Guest Service</PageTitle>
+              <Service/>
             </SuspensedView>
           }
         />

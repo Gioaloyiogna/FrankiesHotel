@@ -171,8 +171,9 @@ const GuestMultiTabForm = () => {
                     onChange={onChange}
                     onPreview={onPreview}
                     multiple={false}
+                   
                   >
-                    <UploadOutlined />
+                    {/* <UploadOutlined /> */}
                   </Upload>
                 </div>
               </div>

@@ -23,6 +23,9 @@ export const fetchNotes= ()=>{
 export const fetchBookings= ()=>{
     return axios.get(`${Api_Endpoint}/Booking`)
 }
+// export const fetchGuestService=()=>{
+//     return axios.get
+// }
 export const fetchServiceDetailsApi= ()=>{
     return axios.get(`${Api_Endpoint}/ServiceDetails`)
 }
@@ -53,6 +56,10 @@ export const deleteNotesApi=(id:any)=>{
 export const addServiceApi=(values:any)=>{
     return axios.post(`${Api_Endpoint}/Service/`, values)
 }
+export const addHouseItemApi=(values:any)=>{
+    return axios.post(`${Api_Endpoint}/HouseKeeping/`, values)
+}
+
 export const cancelBookingApi=(id:any)=>{
    return axios.delete(`${Api_Endpoint}/Booking/${id}`, id)
 }

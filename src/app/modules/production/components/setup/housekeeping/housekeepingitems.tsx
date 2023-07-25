@@ -9,6 +9,7 @@ import {QueryClient, useMutation, useQuery, useQueryClient} from 'react-query'
 import {
   Api_Endpoint,
   addCategoryServiceApi,
+  addHouseItemApi,
   fetchHouseKeepingApi,
   fetchRooms,
   fetchServiceDetailsApi,
@@ -24,18 +25,16 @@ const Housekeepingitems = () => {
   const [form] = Form.useForm()
   const [img, setImg] = useState()
   const queryClient = useQueryClient()
-  const {data: serviceDetailsData} = useQuery('fetchServiceDetails', fetchServiceDetailsApi)
-  const {data:HouseKeepingData}=useQuery('fetchItems', fetchHouseKeepingApi)
-  const {mutate: addServiceCategoryData} = useMutation((values: any) =>
-    addCategoryServiceApi(values)
-  )
+
+  const {data: HouseKeepingData} = useQuery('fetchItems', fetchHouseKeepingApi)
+  const {mutate: addHouseItemData} = useMutation((values: any) => addHouseItemApi(values))
   const [openNoteModal, setopenNoteModal] = useState(false)
   const parms: any = useParams()
   const [categoryForm] = Form.useForm()
   const cancelNoteModal = () => {
     setopenNoteModal(false)
   }
-  const data = serviceDetailsData?.data.filter((item: any) => {
+  const data = HouseKeepingData?.data.filter((item: any) => {
     return item.serviceCategoryId == parms.id
   })
   const submitService = (values: any) => {
@@ -43,12 +42,12 @@ const Housekeepingitems = () => {
     Modal.confirm({
       okText: 'Ok',
       okType: 'primary',
-      title: 'Are you sure, you want to add this service?',
+      title: 'Are you sure, you want to add this item?',
       onOk: () => {
-        addServiceCategoryData(values, {
+        addHouseItemData(values, {
           onSuccess: () => {
-            message.info('Category added successfully!')
-            queryClient.invalidateQueries('fetchServiceDetails')
+            message.info('Item added successfully!')
+            queryClient.invalidateQueries('fetchItems')
             setopenNoteModal(false)
             categoryForm.resetFields()
           },
@@ -56,7 +55,7 @@ const Housekeepingitems = () => {
       },
     })
   }
-  const addServiceCategory = () => {
+  const addHouseItems = () => {
     setopenNoteModal(true)
   }
   const columns: any = [
@@ -172,7 +171,7 @@ const Housekeepingitems = () => {
               <button
                 type='button'
                 className='btn btn-primary me-3'
-                // onClick={() => addServiceCategory()}
+                onClick={() => addHouseItems()}
               >
                 <KTSVG path='/media/icons/duotune/arrows/arr075.svg' className='svg-icon-2' />
                 Add
@@ -184,7 +183,7 @@ const Housekeepingitems = () => {
               </button>
             </Space>
           </div>
-          <Table columns={columns} className='table-responsive' dataSource={HouseKeepingData?.data}/>
+          <Table columns={columns} className='table-responsive' dataSource={data} />
         </div>
         <Modal
           open={openNoteModal}
@@ -197,8 +196,8 @@ const Housekeepingitems = () => {
           <Form form={categoryForm} onFinish={submitService}>
             <Form.Item
               name={'name'}
-              label='Service'
-              rules={[{required: true, message: 'Please enter service name'}]}
+              label='Item'
+              rules={[{required: true, message: 'Please enter item'}]}
               hasFeedback
               style={{width: '100%'}}
               labelCol={{span: 5}}
@@ -206,14 +205,14 @@ const Housekeepingitems = () => {
               <Input type='text' style={{width: '100%'}} />
             </Form.Item>
             <Form.Item
-              name={'price'}
-              label='Price'
-              rules={[{required: true, message: 'Please enter service price'}]}
+              name={'quantity'}
+              label='Quantity'
+              rules={[{required: true, message: 'Please enter quantity'}]}
               hasFeedback
               style={{width: '100%'}}
               labelCol={{span: 5}}
             >
-              <Input type='text' style={{width: '100%'}} />
+              <Input type='number' style={{width: '100%'}} />
             </Form.Item>
             <Form.Item
               label='Description'
@@ -226,7 +225,7 @@ const Housekeepingitems = () => {
               <TextArea rows={4} style={{width: '100%'}} />
             </Form.Item>
 
-            <Form.Item wrapperCol={{offset: 2, span: 18}}>
+            <Form.Item wrapperCol={{offset: 5, span: 18}}>
               <Button type='primary' key='submit' htmlType='submit'>
                 Submit
               </Button>

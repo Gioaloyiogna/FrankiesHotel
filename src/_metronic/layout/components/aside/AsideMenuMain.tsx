@@ -46,19 +46,14 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen028.svg'
             title='Reservation' 
           /> */}
+
         <AsideMenuItem
-          to='#'
-          hasBullet={false}
-          icon='/media/icons/duotune/general/gen005.svg'
-          title='Room Inventory'
-        />
-        <AsideMenuItem
-          to='#'
+          to='/front-office/service'
           hasBullet={false}
           icon='/media/icons/duotune/general/gen005.svg'
           title='Services'
         />
-        
+
         <AsideMenuItem
           to='employee/'
           hasBullet={false}
@@ -474,12 +469,12 @@ export function AsideMenuMain() {
             title='Posting to Room' 
           />
         </AsideMenuItemWithSub> */}
-      <AsideMenuItem
+      {/* <AsideMenuItem
         // <AsideMenuItemWithSub
         to='#'
         icon='/media/icons/duotune/communication/com013.svg'
         title='House Keeping'
-      ></AsideMenuItem>
+      ></AsideMenuItem> */}
       {/* </AsideMenuItemWithSub> */}
       <AsideMenuItem
         to='#'
@@ -523,7 +518,6 @@ export function AsideMenuMain() {
             icon='/media/icons/duotune/general/gen005.svg'
             title='Category'
           />
-          
         </AsideMenuItemWithSub>
         <AsideMenuItem
           to='/housekeeping'
@@ -531,7 +525,7 @@ export function AsideMenuMain() {
           icon='/media/icons/duotune/general/gen005.svg'
           title='House Keeping Items'
         />
-        
+
         <AsideMenuItem
           to='#'
           hasBullet={false}

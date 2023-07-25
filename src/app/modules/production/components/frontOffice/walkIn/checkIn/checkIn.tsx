@@ -15,6 +15,7 @@ import {
   GuestCheckinApi,
   GuestCheckoutApi,
   addBookingApi,
+  fetchServiceDetailsApi,
 } from '../../../../../../services/ApiCalls'
 import {DropDownListComponent} from '@syncfusion/ej2-react-dropdowns/src/drop-down-list/dropdownlist.component'
 import TextArea from 'antd/es/input/TextArea'
@@ -36,14 +37,29 @@ const CheckIn = () => {
   const {data: getGuests, isLoading: GetGuestsLoad} = useQuery('Guests', fetchGuests)
   const {data: roomsdata, isLoading: GetRoomsLoad} = useQuery('rooms', fetchRooms)
   const {data: bookingData, isLoading: BookingsLoad} = useQuery('Bookings', fetchBookings)
+  const {data: servicesDetails} = useQuery('fetchServicesDetails', fetchServiceDetailsApi)
   const {mutate: checkGuestInQuery} = useMutation((values: any) => GuestCheckinApi(values))
   const [isOpen, setIsOpen] = useState(false)
   const [messageApi, contextHolder] = message.useMessage()
   const {mutate: addReservation} = useMutation((values: any) => addBookingApi(values))
   const queryClient = useQueryClient()
   const {mutate: checkGuestOutQuery} = useMutation((values: any) => GuestCheckoutApi(values))
+  const [openAddServiceModal, setopenAddServiceModal] = useState(false)
+  const [priceValue, setpriceValue] = useState<any>()
   const [addBookingForm] = Form.useForm()
-
+  const [totalprice, setTotalPrice] = useState(0)
+  const [serviceData, setServiceData] = useState<any>({})
+  const [allServiceData, setAllServiceData] = useState<any>([])
+  const roomsOptions: any = []
+  const servicesOptions: any = []
+  const [allServicesArr, setallServicesArr] = useState<any>([])
+  roomsdata?.data.map((item: any) => {
+    roomsOptions.push({value: item.id, label: item.name})
+  })
+  servicesDetails?.data.map((item: any) => {
+    servicesOptions.push({value: item.id, label: item.name})
+  })
+  const [serviceForm] = Form.useForm()
   // roomsTypedata?.data.find(roomTypedata => {
   //   if(roomTypedata.id==roo)
   //   return
@@ -140,7 +156,7 @@ const CheckIn = () => {
     }
   })
   const newFilteredData = data?.filter((e: any) => {
-    return e.checkOutTime == null && e.checkInTime !=null
+    return e.checkOutTime == null && e.checkInTime != null
   })
 
   // console.log("roomList", roomsdata?.data);
@@ -207,6 +223,81 @@ const CheckIn = () => {
   function handleDelete(element: any) {
     deleteData(element)
   }
+  const serviceColumns: any = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      sorter: (a: any, b: any) => {
+        if (a.guest > b.guest) {
+          return 1
+        }
+        if (b.guest > a.guest) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
+      title: 'Room',
+      dataIndex: 'roomId',
+      sorter: (a: any, b: any) => {
+        if (a.room > b.room) {
+          return 1
+        }
+        if (b.room > a.room) {
+          return -1
+        }
+        return 0
+      },
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      sorter: (a: any, b: any) => {
+        if (a.checkInTime > b.checkInTime) {
+          return 1
+        }
+        if (b.checkInTime > a.checkInTime) {
+          return -1
+        }
+        return 0
+      },
+    },
+    // {
+    //   title: 'Check In Time',
+    //   dataIndex: 'checkInTime',
+    //   sorter: (a: any, b: any) => {
+    //     if (a.checkInTime > b.checkInTime) {
+    //       return 1
+    //     }
+    //     if (b.checkInTime > a.checkInTime) {
+    //       return -1
+    //     }
+    //     return 0
+    //   },
+    // },
+
+    {
+      title: 'Action',
+      fixed: 'right',
+      // width: 20,
+      render: (_: any, record: any) => (
+        <Space size='middle'>
+          <a href='#' className='btn btn-light-danger btn-sm'>
+            Delete
+          </a>
+          {/*      
+        <Space size='middle'>
+          {/* <Link to={`/notes-form/${record.id}`}>
+          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'blue', color: 'white' }}>Note</span>
+          </Link> 
+           <Link to={`/employee-edit-form/${record.id}`}>
+          <span className='btn btn-light-info btn-sm delete-button' style={{ backgroundColor: 'Green', color: 'white' }}>Check In</span>
+          </Link> */}
+        </Space>
+      ),
+    },
+  ]
   const columns: any = [
     {
       title: 'Name',
@@ -267,13 +358,20 @@ const CheckIn = () => {
       // width: 20,
       render: (_: any, record: any) => (
         <Space size='middle'>
-          {/* <a
+          <a
             href='#'
-            className='btn btn-light-warning btn-sm'
-            onClick={() => checkGuestIn({id: record.id, checkInOutTime: new Date()})}
+            className='btn btn-light-success btn-sm'
+            onClick={() =>
+              addService({
+                id: record.id,
+                checkInTime: record.checkInTime,
+
+                checkInOutTime: new Date(),
+              })
+            }
           >
-            Ckeck In
-          </a> */}
+            Add Service
+          </a>
           <a
             href='#'
             className='btn btn-light-primary btn-sm'
@@ -333,6 +431,28 @@ const CheckIn = () => {
       },
     })
   }
+  const addService = (guestData: any) => {
+    setopenAddServiceModal(true)
+    // if (guestData.checkInTime === null) {
+    //   message.info('Please, check In before you check out!')
+    //   return
+    // }
+    // Modal.confirm({
+    //   okText: 'Confirm',
+    //   okType: 'primary',
+    //   title: 'Kindly confirm check-out!',
+    //   onOk: () => {
+    //     checkGuestOutQuery(guestData, {
+    //       onSuccess: () => {
+    //         message.success('Guest successfully ckecked out!')
+    //         queryClient.invalidateQueries('Bookings')
+    //         queryClient.invalidateQueries('Guests')
+    //         queryClient.invalidateQueries('rooms')
+    //       },
+    //     })
+    //   },
+    // })
+  }
 
   useEffect(() => {
     loadData()
@@ -351,6 +471,12 @@ const CheckIn = () => {
       out_data[row.departmentId] = [row]
     }
   })
+  const  cancelNoteModal=()=>{
+       setopenAddServiceModal(false)  
+       serviceForm.resetFields() 
+       setAllServiceData([])
+       setTotalPrice(0)
+  }
 
   const dataWithIndex = gridData.map((item: any, index: any) => ({
     ...item,
@@ -362,6 +488,49 @@ const CheckIn = () => {
     if (e.target.value === '') {
       loadData()
     }
+  }
+
+  const handleChangeForService = (e: any) => {
+    let data = servicesDetails?.data.filter((item: any) => {
+      return item.id == parseInt(e)
+    })
+    serviceForm.setFieldsValue({price: data[0].price})
+    setpriceValue(data[0].price)
+    const service = servicesOptions.filter((item: any) => {
+      return item.value === e
+    })
+    setServiceData({...serviceData, name: service[0].label})
+  }
+  const onChangeForPrice = (e: any) => {
+    if (e.target.value < 1) {
+      serviceForm.setFieldsValue({price: 0})
+    }
+  if( serviceForm.getFieldValue('Quantity')){
+    setTotalPrice(serviceForm.getFieldValue('Quantity')*e.target.value )
+  }
+  
+   
+  }
+  let arr: any = []
+  const newService = () => {
+    setAllServiceData((prevAllServicesArr: any) => [...prevAllServicesArr, serviceData])
+    arr.push(serviceData)
+    // setAllServiceData(allServicesArr)
+    setpriceValue(false)
+    setTotalPrice(0)
+    console.log('data', allServicesArr)
+    serviceForm.resetFields()
+  }
+
+  const onchangeQuantity = (e: any) => {
+    if (e.target.value < 1) {
+      serviceForm.setFieldsValue({Quantity: 0})
+    }
+    setTotalPrice(priceValue ? e.target.value * priceValue : 0)
+    setServiceData({...serviceData, quantity: e.target.value})
+  }
+  const handleChangeRoom = (e: any) => {
+    setServiceData({...serviceData, roomId: e})
   }
   const addCheckIn = () => {
     setIsOpen(true)
@@ -411,6 +580,8 @@ const CheckIn = () => {
       },
     })
   }
+  
+ 
   return (
     // <div
     //   style={{
@@ -529,6 +700,80 @@ const CheckIn = () => {
                 </Button>
               </Form.Item>
             </Form>
+          </Modal>
+          <Modal
+            open={openAddServiceModal}
+            okText='Ok'
+            title='Add Service '
+            closable={true}
+            onCancel={cancelNoteModal}
+          >
+            <Form form={serviceForm} onFinish={newService}>
+              <Space>
+                <button type='submit' className='btn btn-light-primary me-3'>
+                  Submit
+                </button>
+                <div>
+                  <span className='btn text-primary mr-0'>Total:{totalprice}</span>
+                </div>
+              </Space>
+              <Form.Item
+                name={'name'}
+                label='Service'
+                rules={[{required: true, message: 'Please enter item'}]}
+                hasFeedback
+                style={{width: '100%'}}
+                labelCol={{span: 5}}
+              >
+                <Select onChange={handleChangeForService} options={servicesOptions} />
+              </Form.Item>
+              <Form.Item
+                name={'price'}
+                label='price'
+                rules={[{required: true, message: 'Please enter price'}]}
+                hasFeedback
+                style={{width: '100%'}}
+                labelCol={{span: 5}}
+              >
+                <Input
+                  type='number'
+                  style={{width: '100%'}}
+                  disabled={!priceValue}
+                  onChange={onChangeForPrice}
+                />
+              </Form.Item>
+              <Form.Item
+                name={'Quantity'}
+                label='quantity'
+                rules={[{required: true, message: 'Please enter price'}]}
+                hasFeedback
+                style={{width: '100%'}}
+                labelCol={{span: 5}}
+              >
+                <Input
+                  type='number'
+                  style={{width: '100%'}}
+                  onChange={onchangeQuantity}
+                  disabled={!priceValue}
+                />
+              </Form.Item>
+              <Form.Item
+                name={'room'}
+                label='Room'
+                rules={[{required: true, message: 'Please enter price'}]}
+                hasFeedback
+                style={{width: '100%'}}
+                labelCol={{span: 5}}
+              >
+                <Select onChange={handleChangeRoom} options={roomsOptions} />
+              </Form.Item>
+            </Form>
+            <Table
+              columns={serviceColumns}
+              dataSource={allServiceData}
+              // loading={BookingsLoad}
+              className='table-responsive'
+            />
           </Modal>
         </div>
       </KTCardBody>
